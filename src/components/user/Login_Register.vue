@@ -194,6 +194,8 @@ export default {
 		onLogin({ validateResult, firstError }) {
 			if (validateResult === true) {
 				this.$message.success('登陆成功');
+				// 成功过后跳转页面
+				this.$router.push({ path: '/home' });
 			} else {
 				console.log('Errors: ', validateResult);
 				this.$message.warning(firstError);
