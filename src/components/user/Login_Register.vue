@@ -131,8 +131,8 @@ export default {
 				],
 				password: [
 					{ required: true, message: '密码必填', type: 'error' },
-					{ len: 8, message: '请输入 8 位密码', type: 'warning' },
-					{ pattern: /[A-Z]+/, message: '密码必须包含大写字母', type: 'warning' },
+					{ len: 6, message: '请输入 6 位密码', type: 'warning' },
+					// { pattern: /[A-Z]+/, message: '密码必须包含大写字母', type: 'warning' },
 				],
 			},
 			register_rules: {
@@ -191,18 +191,26 @@ export default {
 		};
 	},
 	methods: {
-		onLogin({ validateResult, firstError }) {
+		async onLogin({ validateResult, firstError }) {
 			if (validateResult === true) {
-				let that = this;
-				axios.post(this.url, {
-					// 存放请求携带的参数
-					// password: that.password,
-				}).then(function (res) {
-					// 请求成功
-					this.$message.success('登陆成功');
-					// 成功过后跳转页面
-					this.$router.push({ path: '/home' });
-				})
+				const { data: res } = await this.$http.post("login", {
+					username: LOGIN.account,
+					password: LOGIN.password,
+				});
+				if (res.meta.status === 400) {
+					this.$message.warning("用户名或密码错误！");
+				} else if (res.meta.status === 200) {
+					this.$message({
+						message: "登陆成功！",
+						type: "success",
+						center: true,
+						showClose: true,
+					});
+					// 将得到的 token 存入
+					sessionStorage.token = res.data.token;
+					// 登陆成功则跳转
+					this.$router.push("/home");
+				}
 			} else {
 				console.log('Errors: ', validateResult);
 				this.$message.warning(firstError);
@@ -211,11 +219,11 @@ export default {
 		},
 
 
-		onRegister({ validateResult, firstError }) {
+		async onRegister({ validateResult, firstError }) {
 			if (validateResult === true) {
 				//注册
 				var that = this;
-				axios.post(this.url, {
+				$http.post(this.url, {
 					// 给接口的参数
 				}).then(function (res) {
 					// 请求成功
