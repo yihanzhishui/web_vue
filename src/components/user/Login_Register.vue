@@ -193,22 +193,45 @@ export default {
 	methods: {
 		onLogin({ validateResult, firstError }) {
 			if (validateResult === true) {
-				this.$message.success('登陆成功');
-				// 成功过后跳转页面
-				this.$router.push({ path: '/home' });
+				let that = this;
+				axios.post(this.url, {
+					// 存放请求携带的参数
+					// password: that.password,
+				}).then(function (res) {
+					// 请求成功
+					this.$message.success('登陆成功');
+					// 成功过后跳转页面
+					this.$router.push({ path: '/home' });
+				})
 			} else {
 				console.log('Errors: ', validateResult);
 				this.$message.warning(firstError);
 			}
+
 		},
+
+
 		onRegister({ validateResult, firstError }) {
 			if (validateResult === true) {
-				this.$message.success('注册成功');
+				//注册
+				var that = this;
+				axios.post(this.url, {
+					// 给接口的参数
+				}).then(function (res) {
+					// 请求成功
+					if (res.status === 200) {
+						LOGIN.account = res.data.account;
+						LOGIN.password = res.data.password;
+						this.$message.success('注册成功，请返回登录');
+					}
+				}
+				)
 			} else {
 				console.log('Errors: ', validateResult);
 				this.$message.warning(firstError);
 			}
 		},
+
 		// 自定义异步校验器
 		rePassword(val) {
 			if (this.RegisterFormData.password !== this.RegisterFormData.confirm_password) {

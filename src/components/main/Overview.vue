@@ -61,13 +61,61 @@ export default {
             my_book_content: [],
             empty_room_content: [],
             recommend_content: [],
-
         }
     },
 
     methods: {
-        // 测试数据
+        // 获取我的预约表格数据
+        getMyBook() {
+            let that = this;
+            axios.post(this.url, {
+                // 存放请求携带的参数
+                // password: that.password,
+            }).then(function (res) {
+                // 请求成功
+                if (res.status === 200) {
+                    this.my_book_content = res.data;
+                    this.$message.success('成功获取我的预约数据');
+                } else {
+                    this.$message.error('获取数据错误');
+                }
+            })
+        },
 
+        // 获取空教室数据
+        getEmptyRoom() {
+            let that = this;
+            axios.post(this.url, {
+                // 存放请求携带的参数
+                // password: that.password,
+            }).then(function (res) {
+                // 请求成功
+                if (res.data === 200) {
+                    this.my_book_content = res.data;
+                    this.$message.success('成功获取空教室数据');
+                } else {
+                    this.$message.error('获取数据错误');
+                }
+            })
+        },
+
+
+        // 获取推荐预约教室
+        getRecomandBook() {
+            let that = this;
+            axios.post(this.url, {
+                // 存放请求携带的参数
+                // password: that.password,
+            }).then(function (res) {
+                // 请求成功
+                if (res.data === 200) {
+                    this.recommend_content = res.data;
+                    this.$message.success('成功获取推荐数据');
+                } else {
+                    this.$message.error('获取数据错误');
+                }
+            })
+        }
     }
 };
 

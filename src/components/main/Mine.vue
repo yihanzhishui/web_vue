@@ -3,9 +3,9 @@
         <template>
             <t-card :title="title" hover-shadow class="t_card_box">
                 <t-list stripe>
-                    <t-list-item>昵称 : {{ nick_name }}</t-list-item>
-                    <t-list-item>邮箱 : {{ email }}</t-list-item>
-                    <t-list-item>账号 : {{ account }}</t-list-item>
+                    <t-list-item>昵称 : {{ user_info.nick_name }}</t-list-item>
+                    <t-list-item>邮箱 : {{ user_info.email }}</t-list-item>
+                    <t-list-item>账号 : {{ user_info.account }}</t-list-item>
                 </t-list>
                 <t-button variant="outline" theme="danger" class="logout_btn" @click="logout_visible = true">退出登录</t-button>
                 <template #actions>
@@ -24,9 +24,11 @@ export default {
     data() {
         return {
             title: '我的信息',
-            nick_name: '一寒止水',
-            email: '321xxxxxx@qq.com',
-            account: '132456798',
+            user_info: {
+                nick_name: '一寒止水',
+                email: '321xxxxxx@qq.com',
+                account: '132456798',
+            },
             logout_visible: false,
         }
     },
@@ -45,7 +47,6 @@ export default {
 <style lang="less" scoped>
 .t_card_main {
     height: 100%;
-
 }
 
 a {
