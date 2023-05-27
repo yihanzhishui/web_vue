@@ -5,8 +5,8 @@
                 <img slot="logo" width="136" class="logo" src="https://tdesign.gtimg.com/site/baseLogo-light.png"
                     alt="logo" />
                 <template #operations>
-                    <t-switch size="large" defaultValue="true" v-model="theme_mode" style="margin-right:10px"
-                        :onChange="changeThemeMode" :label="['暗', '明']">
+                    <t-switch size="large" :defaultValue="isDark" v-model="isDark" style="margin-right:10px"
+                        :onChange="changeThemeMode" :label="['夜间', '白天']">
                     </t-switch>
                     <icon class="t-menu__operations-icon" name="logout" @click="logout_visible = true" />
                     <logout :visible.sync="logout_visible" @onCloseDialogLogout="onCloseDialogLogout" />
@@ -15,17 +15,20 @@
         </t-header>
         <t-layout>
             <t-aside class="home_aside">
-                <t-menu theme="light" defaultValue="home" class="t_menu" height="550px" size="large">
-                    <t-menu-item value="home" to="/overview" class="t_menu_item">
+                <t-menu theme="light" :defaultValue="menu_items[default_value]" class="t_menu" height="550px" size="large">
+                    <t-menu-item value="map" to="/map" class="t_menu_item" @click="changeDefaultItem(0)">
+                        <icon slot="icon" name="image" />地图
+                    </t-menu-item>
+                    <t-menu-item value="overview" to="/overview" class="t_menu_item" @click="changeDefaultItem(1)">
                         <icon slot="icon" name="home" />首页
                     </t-menu-item>
-                    <t-menu-item value="search" to="/search" class="t_menu_item">
+                    <t-menu-item value="search" to="/search" class="t_menu_item" @click="changeDefaultItem(2)">
                         <icon slot="icon" name="search" />查询
                     </t-menu-item>
-                    <t-menu-item value="book" to="/book" class="t_menu_item">
+                    <t-menu-item value="book" to="/book" class="t_menu_item" @click="changeDefaultItem(3)">
                         <icon slot="icon" name="server" />预约
                     </t-menu-item>
-                    <t-menu-item value="mine" to="/mine" class="t_menu_item">
+                    <t-menu-item value="mine" to="/mine" class="t_menu_item" @click="changeDefaultItem(4)">
                         <icon slot="icon" name="user-circle" />我的
                     </t-menu-item>
                 </t-menu>
@@ -52,10 +55,14 @@ export default {
     },
     data() {
         return {
-            theme_mode: true,
+            isDark: sessionStorage.isDark === null ? true : sessionStorage.isDark,
             logout_visible: false,
+            default_value: sessionStorage.defaultItem == null ? 0 : sessionStorage.defaultItem,
+            menu_items: ['map', 'overview', 'search', 'book', 'mine'],
         }
     },
+
+
     methods: {
         logout() {
             window.sessionStorage.clear();
@@ -66,12 +73,19 @@ export default {
             this.logout_visible = logout_visible;
         },
 
+        changeDefaultItem(item) {
+            sessionStorage.defaultItem = item;
+        },
+
         // 切换暗色模式
         changeThemeMode() {
+            sessionStorage.isDark = this.isDark;
+            console.log("是否dark:" + this.isDark)
             // 设置暗色模式
-            this.theme_mode === true ? document.documentElement.setAttribute('theme-mode', 'dark') : document.documentElement.removeAttribute('theme-mode');
-        }
-    }
+            this.isDark === true ? document.documentElement.setAttribute('theme-mode', 'dark') : document.documentElement.removeAttribute('theme-mode');
+        },
+
+    },
 }
 </script>
 

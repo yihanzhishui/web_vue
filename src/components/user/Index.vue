@@ -2,8 +2,8 @@
 	<!-- https://www.tencent.com/img/index/menu_logo_hover.png -->
 	<t-card bordered class="t_card">
 		<template #actions>
-			<t-switch size="large" defaultValue="true" v-model="theme_mode" style="margin-right:10px"
-				:onChange="changeThemeMode" :label="['暗', '明']">
+			<t-switch size="large" :defaultValue="isDark" v-model="isDark" style="margin-right:10px"
+				:onChange="changeThemeMode" :label="['夜间', '白天']">
 			</t-switch>
 		</template>
 		<t-space style="width:100%; height:100%;display:flex" theme-mode="dark">
@@ -17,7 +17,7 @@
 						<!-- 登陆选项卡 -->
 						<t-tab-panel value="login">
 							<template #label>
-								<icon name="login" style="margin-right: 4px" /> 登录
+								<icon name="login" style="margin-right: 4px" :isDark="isDark" /> 登录
 							</template>
 							<Login />
 						</t-tab-panel>
@@ -58,7 +58,7 @@ export default {
 	data() {
 		return {
 			value: 'first',
-			theme_mode: true,
+			isDark: sessionStorage.isDark === null ? true : !sessionStorage.isDark,
 			// 首页轮播图
 			swiper_image: [
 				{ content: 'https://ts1.cn.mm.bing.net/th/id/R-C.d3ef462947fff8d83636ac61063133fe?rik=WvjhjdLrj5xPLQ&riu=http%3a%2f%2fwww.nc5z.com%2fwp-content%2fuploads%2f2017%2f05%2funnamed-file-19.jpg&ehk=HVs5tYt%2bIsGT%2fc%2bzfSnp16mmir4MuWGdxMiMELFGo3s%3d&risl=&pid=ImgRaw&r=0', index: 1 },
@@ -69,11 +69,22 @@ export default {
 			header_title: 'XXX 系统',
 		};
 	},
+
+	mounted() {
+		window.addEventListener('unload', this.handleUnload);
+	},
 	methods: {
 		// 切换暗色模式
 		changeThemeMode() {
+			console.log("index:" + this.isDark)
+			sessionStorage.isDark = this.isDark;
 			// 设置暗色模式
-			this.theme_mode === true ? document.documentElement.setAttribute('theme-mode', 'dark') : document.documentElement.removeAttribute('theme-mode');
+			this.isDark === false ? document.documentElement.setAttribute('theme-mode', 'dark') : document.documentElement.removeAttribute('theme-mode');
+		},
+
+		handleUnload() {
+			// 在页面已经被卸载时触发，可以在这里添加需要执行的逻辑
+			sessionStorage.isDark = null;
 		}
 	}
 };

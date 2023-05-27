@@ -32,6 +32,10 @@ import { Icon, DesktopIcon, LockOnIcon, MailIcon, UserIcon, ImageIcon } from 'td
 
 export default {
     name: 'Login',
+
+    props: {
+        isDark: Boolean
+    },
     components: {
         Icon,
         DesktopIcon,
@@ -79,8 +83,9 @@ export default {
             if (this.LOGIN.account === 'admin' && this.LOGIN.password === '123456' && this.LOGIN.validate_code === '1234') {
                 this.is_loading = true;
                 this.token = '123';
-                this.$message.success({ content: "登陆成功！", closeBtn: true });
+                this.$message.success({ content: "登陆成功！" + this.isDark, closeBtn: true });
                 // 登陆成功则跳转
+                sessionStorage.isDark = this.isDark;
                 this.$router.push("/home");
             }
             // =======================测试End

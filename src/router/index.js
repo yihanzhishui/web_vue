@@ -7,6 +7,7 @@ import Overview from "@/components/main/Overview/Overview.vue";
 import Search from "@/components/main/Search/Search.vue";
 import Book from "@/components/main/Book/Book.vue";
 import Mine from "@/components/main/Mine/Mine.vue";
+import Map from "@/components/main/Home/Map.vue";
 
 Vue.use(VueRouter);
 
@@ -25,12 +26,13 @@ const routes = [
     path: "/home",
     name: "home",
     component: Home,
-    redirect: "/overview",
+    redirect: "/map",
     children: [
       { path: "/overview", component: Overview },
       { path: "/search", component: Search },
       { path: "/book", component: Book },
       { path: "/mine", component: Mine },
+      { path: "/map", component: Map },
     ],
   },
 ];
