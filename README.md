@@ -1,16 +1,16 @@
 # web_vue
 
-## Project setup
+## 项目必要文件
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 开发时编译运行
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### 编译打包
 ```
 npm run build
 ```
