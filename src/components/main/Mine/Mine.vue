@@ -2,16 +2,19 @@
     <t-card :title="title" header-bordered class="t_card_main">
         <template>
             <t-card :title="title" hover-shadow class="t_card_box">
-                <t-list stripe>
+                <t-list size="large">
                     <t-list-item>昵称 : {{ user_info.nick_name }}</t-list-item>
                     <t-list-item>邮箱 : {{ user_info.email }}</t-list-item>
                     <t-list-item>账号 : {{ user_info.account }}</t-list-item>
                 </t-list>
                 <t-button variant="outline" theme="danger" class="logout_btn" @click="logout_visible = true">退出登录</t-button>
+                <logout :visible.sync="logout_visible" @onCloseDialogLogout="onCloseDialogLogout" />
                 <template #actions>
-                    <a href="javascript:void(0)" style="line-height: 24px">修改密码</a>
-                    <t-dialog theme="danger" header="警告" body="确定退出吗?" :visible.sync="logout_visible" @confirm="logout()"
-                        cancelBtn="取消" />
+                    <t-link theme="primary" href="javascript:void(0)" target="_self" @click="update_visible = true">
+                        <edit1-icon slot="prefix-icon"></edit1-icon>
+                        修改密码
+                    </t-link>
+                    <update-password :visible.sync="update_visible" @onCloseDialogPwd="onCloseDialogPwd" />
                 </template>
             </t-card>
         </template>
@@ -20,14 +23,26 @@
 
 <script>
 
+import { Edit1Icon } from 'tdesign-icons-vue'
+import UpdatePassword from '@/components/main/Mine/UpdatePassword.vue'
+import Logout from '@/components/main/Home/Logout.vue'
+
 export default {
+    name: 'Mine',
+    components: {
+        Edit1Icon,
+        UpdatePassword,
+        Logout,
+    },
     data() {
         return {
             title: '我的信息',
+            update_visible: false,
+            logout_visible: false,
             user_info: {
-                nick_name: '一寒止水',
-                email: '321xxxxxx@qq.com',
-                account: '132456798',
+                nick_name: '------',
+                email: '------@xx.com',
+                account: '------',
             },
             logout_visible: false,
         }
@@ -38,6 +53,14 @@ export default {
             window.sessionStorage.clear();
             this.$router.push('/')
         },
+
+        onCloseDialogPwd(update_visible) {
+            this.update_visible = update_visible;
+        },
+
+        onCloseDialogLogout(logout_visible) {
+            this.logout_visible = logout_visible;
+        }
     }
 };
 

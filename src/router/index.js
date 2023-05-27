@@ -1,20 +1,25 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
-import Login_Register from "../components/user/Login_Register.vue";
-import Home from "../components/main/Home.vue";
-import Overview from "../components/main/Overview.vue";
-import Search from "../components/main/Search.vue";
-import Book from "../components/main/Book.vue";
-import Mine from "../components/main/Mine.vue";
+import Index from "@/components/user/Index.vue";
+import Home from "@/components/main/Home/Home.vue";
+import Overview from "@/components/main/Overview/Overview.vue";
+import Search from "@/components/main/Search/Search.vue";
+import Book from "@/components/main/Book/Book.vue";
+import Mine from "@/components/main/Mine/Mine.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "login_register",
-    component: Login_Register,
+    redirect: "/index",
+    name: "index",
+    component: Index,
+  },
+  {
+    path: "/index",
+    component: Index,
   },
   {
     path: "/home",
@@ -32,6 +37,21 @@ const routes = [
 
 const router = new VueRouter({
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  // to 目标
+  // from 来源
+  if (to.path === "/index") {
+    console.log("###");
+    return next();
+  }
+  // 需修改
+  if (false) {
+    console.log("***");
+    return next("/index");
+  }
+  next();
 });
 
 export default router;

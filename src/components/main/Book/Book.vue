@@ -47,7 +47,6 @@
                     </t-table>
                 </t-tab-panel>
             </t-tabs>
-
         </t-dialog>
     </t-card>
 </template>
@@ -55,13 +54,14 @@
 <script>
 import { message } from 'tdesign-vue';
 export default {
-
     data() {
         return {
             title: '预约',
             classroom: '教室名单',
             dialog_visible: false,
             value: 'first',
+
+
 
             // 假设教室人数
             cr_num: 10,
@@ -75,29 +75,20 @@ export default {
                 { colKey: 'book_status', title: '空闲状态' },
                 { colKey: 'operator', title: '操作' },
             ],
-
-            book_content: [
-                { index: 1, building: '六教', classroom: '6B-666', book_status: '空闲', operator: true },
-                { index: 2, building: '东教', classroom: 'E2B-666', book_status: '空闲', operator: true },
-                { index: 3, building: '六教', classroom: '6B-666', book_status: '空闲', operator: true },
-                { index: 4, building: '东教', classroom: 'E2B-666', book_status: '空闲', operator: true },
-                { index: 5, building: '六教', classroom: '6B-666', book_status: '忙', operator: true },
-                { index: 6, building: '六教', classroom: '6B-666', book_status: '空闲', operator: true },
-                { index: 7, building: '六教', classroom: '6B-666', book_status: '空闲', operator: true },
-                { index: 8, building: '六教', classroom: '6B-666', book_status: '空闲', operator: true },
-                { index: 9, building: '六教', classroom: '6B-666', book_status: '空闲', operator: true },
-            ],
-
             room_time_info_columns: [
                 { colKey: 'time', title: '时间段' },
                 { colKey: 'book_status', title: '空闲状态', },
                 { colKey: 'operator', title: '操作' },
             ],
-
             specific_book_columns: [
                 { colKey: 'time', title: '时间段' },
                 { colKey: 'book_status', title: '是否预约' },
                 { colKey: 'operator', title: '操作' },
+            ],
+
+            // 表格内容
+            book_content: [
+                { index: 1, building: 'asasd', classroom: 'asdasd', book_status: '空闲', operator: true }
             ],
             specific_book_content_one: [
                 { index: 1, time: '第1~2节', book_status: '否', operator: true },
@@ -122,7 +113,7 @@ export default {
         // 查询当前点击教室的信息
         async CheckRoomStatus(row) {
             this.dialog_visible = true;
-            this.classroom_name = this.getDialogTitle(row.index)
+            this.classroom_name = row.building + '-' + row.classroom;
             const { data: res } = await this.$http.post("", {
                 // username: LOGIN.account,
                 // password: LOGIN.password,
@@ -133,11 +124,9 @@ export default {
                 this.$message.success({ content: "获取数据成功", closeBtn: true });
             }
         },
-        getDialogTitle(index) {
-            return this.book_content[index].building + "-" + this.book_content[index].classroom
-        },
 
         async Book(row) {
+            this.$message.success({ content: "预约成功", closeBtn: true });
             const { data: res } = await this.$http.post("", {
                 // username: LOGIN.account,
                 // password: LOGIN.password,
@@ -158,29 +147,6 @@ export default {
 <style lang="less" scoped>
 .t_card_main {
     width: 100%;
-    height: 100%;
-}
-
-.dropdown {
-    &__text {
-        display: inline-flex;
-        align-items: center;
-
-        .t-icon {
-            margin-left: 8px;
-        }
-    }
-}
-
-.building {
-    border-right: 1px;
-}
-
-.main_content {
-    height: 100%;
-}
-
-.result_content {
     height: 100%;
 }
 </style>

@@ -3,7 +3,7 @@
         <template class="main_content">
             <t-layout class="result_content">
                 <t-aside class="building">
-                    <t-dropdown :options="buiding_options" trigger="click" @click="onChooseBuilding(buiding_options[0])">
+                    <t-dropdown trigger="click" :options="buiding_options" @click="onChooseBuilding">
                         <t-button variant="outline">
                             <span class="dropdown__text">
                                 {{ building_select_default }}
@@ -16,7 +16,7 @@
                     <t-content>
                         <t-layout v-show="is_classromm_show">
                             <t-aside class="classroom">
-                                <t-dropdown :options="classroom_options" trigger="click" @click="is_result_show = true">
+                                <t-dropdown :options="classroom_options" trigger="click" @click="onChooseClassRoom">
                                     <t-button variant="outline">
                                         <span class="dropdown__text">
                                             {{ classroom_select_default }}
@@ -90,10 +90,9 @@ export default {
 
     methods: {
         // 查找教室
-        async onChooseBuilding(index) {
+        async onChooseBuilding(option) {
             this.is_classromm_show = true;
-            console.log(index)
-            this.building_select_default = this.buiding_options[index];
+            this.building_select_default = option.content;
             const { data: res } = await this.$http.post("", {
                 // username: LOGIN.account,
                 // password: LOGIN.password,
@@ -105,9 +104,9 @@ export default {
             }
         },
         // 查找教室详情
-        async onChooseClassRoom(index) {
+        async onChooseClassRoom(option) {
             this.is_result_show = true;
-            this.classroom_select_default = this.classroom_options[index];
+            this.classroom_select_default = option.content;
             const { data: res } = await this.$http.post("", {
                 // username: LOGIN.account,
                 // password: LOGIN.password,
@@ -159,6 +158,19 @@ export default {
 }
 
 .result_content {
+    height: 100%;
+}
+
+.t_dropdown_button {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+
+}
+
+.dropdown__text {
+    margin: 0;
+    width: 100%;
     height: 100%;
 }
 </style>

@@ -32,28 +32,18 @@ export default {
             // 表头
             my_book_columns: [
                 { colKey: 'classroom', title: '教室', },
-                {
-                    colKey: 'status',
-                    title: '是否预约',
-                },
+                { colKey: 'status', title: '是否预约', },
                 { colKey: 'address', title: '地址' },
                 { colKey: 'time', title: '预约时间段' },
             ],
             empty_room_columns: [
                 { colKey: 'classroom', title: '教室', },
-                {
-                    colKey: 'empty_status',
-                    title: '空闲状态',
-                },
+                { colKey: 'empty_status', title: '空闲状态', },
                 { colKey: 'operate', title: '操作', fixed: 'right', },
             ],
             recommend_columns: [
                 { colKey: 'classroom', title: '教室', },
-                {
-                    colKey: 'empty_status',
-                    title: '空闲状态',
-                },
-
+                { colKey: 'empty_status', title: '空闲状态', },
                 { colKey: 'address', title: '地址' },
                 { colKey: 'operate', title: '操作', fixed: 'right', },
             ],
@@ -66,55 +56,43 @@ export default {
 
     methods: {
         // 获取我的预约表格数据
-        getMyBook() {
-            let that = this;
-            axios.post(this.url, {
-                // 存放请求携带的参数
-                // password: that.password,
-            }).then(function (res) {
-                // 请求成功
-                if (res.status === 200) {
-                    this.my_book_content = res.data;
-                    this.$message.success('成功获取我的预约数据');
-                } else {
-                    this.$message.error('获取数据错误');
-                }
-            })
+        async getMyBook() {
+            const { data: res } = await this.$http.post("", {
+                // username: LOGIN.account,
+                // password: LOGIN.password,
+            });
+            if (res.meta.status === 400) {
+                this.$message.error({ content: "获取数据失败", closeBtn: true });
+            } else if (res.meta.status === 200) {
+                this.$message.success({ content: "获取数据成功", closeBtn: true });
+            }
         },
 
         // 获取空教室数据
-        getEmptyRoom() {
-            let that = this;
-            axios.post(this.url, {
-                // 存放请求携带的参数
-                // password: that.password,
-            }).then(function (res) {
-                // 请求成功
-                if (res.data === 200) {
-                    this.my_book_content = res.data;
-                    this.$message.success('成功获取空教室数据');
-                } else {
-                    this.$message.error('获取数据错误');
-                }
-            })
+        async getEmptyRoom() {
+            const { data: res } = await this.$http.post("", {
+                // username: LOGIN.account,
+                // password: LOGIN.password,
+            });
+            if (res.meta.status === 400) {
+                this.$message.error({ content: "获取数据失败", closeBtn: true });
+            } else if (res.meta.status === 200) {
+                this.$message.success({ content: "获取数据成功", closeBtn: true });
+            }
         },
 
 
         // 获取推荐预约教室
-        getRecomandBook() {
-            let that = this;
-            axios.post(this.url, {
-                // 存放请求携带的参数
-                // password: that.password,
-            }).then(function (res) {
-                // 请求成功
-                if (res.data === 200) {
-                    this.recommend_content = res.data;
-                    this.$message.success('成功获取推荐数据');
-                } else {
-                    this.$message.error('获取数据错误');
-                }
-            })
+        async getRecomandBook() {
+            const { data: res } = await this.$http.post("", {
+                // username: LOGIN.account,
+                // password: LOGIN.password,
+            });
+            if (res.meta.status === 400) {
+                this.$message.error({ content: "获取数据失败", closeBtn: true });
+            } else if (res.meta.status === 200) {
+                this.$message.success({ content: "获取数据成功", closeBtn: true });
+            }
         }
     }
 };
