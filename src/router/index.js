@@ -84,7 +84,7 @@ router.beforeEach((to, from, next) => {
     return next();
   }
 
-  if (to.path === "/home") {
+  if (!sessionStorage.token) {
     return next("/index");
   }
   next();

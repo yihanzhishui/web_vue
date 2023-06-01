@@ -96,27 +96,27 @@ export default {
                     password: this.$md5(this.LOGIN.password), // 将密码加密
                     validateCode: this.LOGIN.validate_code,
                     validateKey: localStorage.validate_key,
-                }).then(function (res) {
-                    // 请求成功
-                    if (res.status === 200) {
-                        console.log(res)
-                        if (res.data === '验证码错误' || res.data === '密码错误' || res.data === '用户名无') {
-                            that.$message.error({ content: res.data });
-                            return
+                })
+                    .then(function (res) {
+                        // 请求成功
+                        if (res.status === 200) {
+                            if (res.data === '验证码错误' || res.data === '密码错误' || res.data === '用户名无') {
+                                that.$message.error({ content: res.data });
+                                return
+                            }
+                            that.is_loading = true;
+                            that.$message.success({ content: "登录成功！" });
+                            sessionStorage.user_id = res.headers.sid;
+                            sessionStorage.token = res.headers.token;
+                            sessionStorage.isDark = that.isDark; // 存储网页是否夜间模式
+                            that.$router.push("/home");
                         }
-                        that.is_loading = true;
-                        that.$message.success({ content: "登录成功！" });
-                        localStorage.user_id = this.sid;
-                        // sessionStorage.token=res.data
-                        sessionStorage.isDark = this.isDark; // 存储网页是否夜间模式
-                        this.$router.push("/home");
-                    }
-                }).catch(function (error) {
-                    // 请求失败的处理
-                    console.log(error)
-                    that.$message.error({ content: "登陆出现错误！请稍后重试！" });
-                    that.$router.replace('/500')
-                });
+                    })
+                    .catch(function (error) {
+                        // 请求失败的处理
+                        that.$message.error({ content: "登陆出现错误！请稍后重试！" });
+                        that.$router.replace('/500')
+                    });
             } else {
                 // 表单验证失败的处理
                 console.log('Errors: ', validateResult);

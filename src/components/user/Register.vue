@@ -90,7 +90,7 @@ export default {
             if (validateResult === true) {
                 await this.$http.post("/register", {
                     account: this.REGISTER.account,
-                    password: this.REGISTER.password,
+                    password: this.$md5(this.REGISTER.password),
                     sname: this.REGISTER.nick_name,
                 }).then(function (res) {
                     // 请求成功
