@@ -9,7 +9,8 @@
 		<t-space style="width:100%; height:100%;display:flex" theme-mode="dark">
 			<t-space>
 				<t-space direction="vertical" align="start" class="header_box">
-					<t-image src="@/assets/images/logoko.png" position="top" />
+					<t-image src="https://github.com/yihanzhishui/PicGo/blob/main/logo.png?raw=true" position="top"
+						class="header_img" alt="LOGO" error="LOGO" />
 					<span class="header_title">{{ header_title }}</span>
 				</t-space>
 				<t-space direction="vertical" class="main_box">
@@ -26,22 +27,23 @@
 							<template #label>
 								<icon name="user-add" style="margin-right: 4px" /> 注册
 							</template>
+							<!-- getData获取从子组件获取数据 -->
 							<Register />
 						</t-tab-panel>
 					</t-tabs>
 				</t-space>
 			</t-space>
 			<!-- 轮播图 -->
-			<swiper-image />
+			<SwiperImage />
 		</t-space>
 	</t-card>
 </template>
   
 <script>
-import { Icon, DesktopIcon, UserIcon, } from 'tdesign-icons-vue';
+import { Icon } from 'tdesign-icons-vue';
 import Login from '@/components/user/Login.vue'
 import Register from '@/components/user/Register.vue'
-import SwiperImage from './SwiperImage.vue';
+import SwiperImage from '@/components/user/SwiperImage.vue';
 
 export default {
 	components: {
@@ -54,17 +56,18 @@ export default {
 		return {
 			value: 'first',
 			isDark: sessionStorage.isDark === null ? true : !sessionStorage.isDark,
-			header_title: 'XXX 系统',
+			header_title: '欢迎！',
 		};
 	},
 
 	mounted() {
+		// 添加事件侦听器，在组件重载时，调用handleUnload
 		window.addEventListener('unload', this.handleUnload);
 	},
+
 	methods: {
 		// 切换暗色模式
 		changeThemeMode() {
-			console.log("index:" + this.isDark)
 			sessionStorage.isDark = this.isDark;
 			// 设置暗色模式
 			this.isDark === false ? document.documentElement.setAttribute('theme-mode', 'dark') : document.documentElement.removeAttribute('theme-mode');
@@ -90,9 +93,9 @@ export default {
 }
 
 .header_title {
-	font-size: 30px;
-	font-weight: bold;
-	margin-top: 20px;
+	font-size: 50px;
+	font-weight: light;
+	margin-top: 30px;
 }
 
 .header_box {
@@ -108,6 +111,10 @@ export default {
 .t_card {
 	width: 100%;
 	height: 100%;
+}
+
+.header_img {
+	width: 500px;
 }
 </style>
   

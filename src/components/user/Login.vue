@@ -34,15 +34,16 @@ export default {
     name: 'Login',
 
     props: {
-        isDark: Boolean
+        isDark: Boolean,
     },
+
     components: {
         Icon,
         DesktopIcon,
         LockOnIcon,
         MailIcon,
         UserIcon,
-        ImageIcon
+        ImageIcon,
     },
     data() {
         return {
@@ -53,11 +54,12 @@ export default {
             },
             is_loading: false,
 
-            // token
+            // 存储 token
             token: '',
 
             validate_image: 'https://tdesign.gtimg.com/demo/demo-image-1.png',
-            // ========表单验证规则=========
+
+            // =========表单验证规则=========
             login_rules: {
                 account: [
                     { required: true, message: '姓名必填', type: 'error', trigger: 'blur', },
@@ -78,14 +80,15 @@ export default {
     methods: {
         // 登录
         async onLogin({ validateResult, firstError }) {
-
             // =======================测试Start
             if (this.LOGIN.account === 'admin' && this.LOGIN.password === '123456' && this.LOGIN.validate_code === '1234') {
+                // console.log(this.account);
                 this.is_loading = true;
                 this.token = '123';
-                this.$message.success({ content: "登陆成功！" + this.isDark, closeBtn: true });
+                this.$message.success({ content: "登陆成功！" });
                 // 登陆成功则跳转
                 sessionStorage.isDark = this.isDark;
+                // console.log(this.$md5(this.LOGIN.password));
                 this.$router.push("/home");
             }
             // =======================测试End
@@ -93,7 +96,7 @@ export default {
             // if (validateResult === true) {
             //     const { data: res } = await this.$http.post("", {
             //         username: LOGIN.account,
-            //         password: LOGIN.password,
+            //         password: md5(LOGIN.password),
             //     });
             //     if (res.meta.status === 400) {
             //         this.$message.warning("用户名或密码错误！");
@@ -107,7 +110,6 @@ export default {
             //     console.log('Errors: ', validateResult);
             //     this.$message.warning(firstError);
             // }
-
         },
     }
 }

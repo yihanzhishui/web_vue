@@ -30,11 +30,6 @@
                                     <!-- 查询结果 -->
                                     <t-card :cover="cover" title="查询" description="查询结果" class="result_card"
                                         v-show="is_result_show">
-                                        <!-- <template #actions>
-                                            <t-button variant="text" shape="square">
-                                                预约
-                                            </t-button>
-                                        </template> -->
                                         <template #footer>
                                             <span style="font-size:20px;display:flex;margin-top:10px">
                                                 教室空闲状态: {{ classroom_info.class_empty_status }}
@@ -77,8 +72,8 @@ export default {
                 { content: '第六教学楼', value: 2 },
             ],
             classroom_options: [
-                { content: 'E2B202', value: 1 },
-                { content: '6B222', value: 2 },
+                { content: 'E2B-202', value: 1 },
+                { content: '6B-222', value: 2 },
             ],
             classroom_info: {
                 address: '东教 E2B202',
@@ -128,17 +123,6 @@ export default {
 .t_card_main {
     width: 100%;
     height: 100%;
-}
-
-.dropdown {
-    &__text {
-        display: inline-flex;
-        align-items: center;
-
-        .t-icon {
-            margin-left: 8px;
-        }
-    }
 }
 
 .building {

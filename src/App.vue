@@ -13,5 +13,6 @@
 html,
 body {
   height: 99%;
+  background-color: transparent;
 }
 </style>

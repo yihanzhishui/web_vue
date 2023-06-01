@@ -32,14 +32,16 @@ import { Icon, DesktopIcon, LockOnIcon, MailIcon, UserIcon, ImageIcon } from 'td
 
 export default {
     name: 'UpdatePassword',
+
     components: {
         Icon,
         DesktopIcon,
         LockOnIcon,
         MailIcon,
         UserIcon,
-        ImageIcon
+        ImageIcon,
     },
+
     props: {
         visible: Boolean
     },
@@ -81,7 +83,7 @@ export default {
         },
 
         // 修改密码
-        async UpdatePassword() {
+        async UpdatePassword({ validateResult, firstError }) {
             if (validateResult === true) {
                 const { data: res } = await this.$http.post("", {
                     // username: LOGIN.account,

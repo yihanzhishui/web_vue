@@ -49,10 +49,20 @@ export default {
     },
 
     methods: {
-        logout() {
-            window.sessionStorage.clear();
-            this.$router.push('/')
+
+        // 获取用户信息
+        async getInfo() {
+            const { data: res } = await this.$http.post("", {
+                // username: LOGIN.account,
+                // password: LOGIN.password,
+            });
+            if (data.status === 200) {
+                this.$message.success({ content: "获取数据成功", closeBtn: true });
+            } else if (data.status === 400) {
+                this.$message.error({ content: "获取数据失败", closeBtn: true });
+            }
         },
+
 
         onCloseDialogPwd(update_visible) {
             this.update_visible = update_visible;
@@ -60,11 +70,9 @@ export default {
 
         onCloseDialogLogout(logout_visible) {
             this.logout_visible = logout_visible;
-        }
+        },
     }
 };
-
-
 </script>
 
 <style lang="less" scoped>

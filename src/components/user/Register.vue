@@ -20,7 +20,7 @@
                 </t-input>
             </t-form-item>
             <t-form-item name="email">
-                <t-input size="large" clearable v-model="REGISTER.mail" placeholder="请输入邮箱" autocomplete="off">
+                <t-input size="large" clearable v-model="REGISTER.email" placeholder="请输入邮箱" autocomplete="off">
                     <mail-icon slot="prefix-icon"></mail-icon>
                 </t-input>
             </t-form-item>
@@ -69,33 +69,37 @@ export default {
             },
             is_loading: false,
             validate_image: 'https://tdesign.gtimg.com/demo/demo-image-1.png',
+
             register_rules: {
                 account: [
-                    { required: true, message: '姓名必填', type: 'error', trigger: 'blur', },
                     { required: true, message: '姓名必填', type: 'error', trigger: 'blur', },
                     { whitespace: true, message: '姓名不能为空', trigger: 'blur', },
                     { min: 2, message: '至少需要两个字符，一个中文等于两个字符', type: 'warning', trigger: 'blur', },
                     { max: 10, message: '姓名字符长度超出', type: 'warning', trigger: 'blur', },
                 ],
+
                 password: [
                     { required: true, message: '密码必填', type: 'error', trigger: 'blur', },
                     { len: 6, message: '请输入 6 位密码', type: 'warning', trigger: 'blur', },
                 ],
+
                 confirm_password: [
                     { required: true, message: '确认密码必填', type: 'error', trigger: 'blur', },
                     { validator: this.rePassword, message: '两次密码不一致', trigger: 'blur', }
                 ],
+
                 email: [
                     { required: true, message: '邮箱必填', trigger: 'blur', },
                     { email: { ignore_max_length: true }, message: '请输入正确的邮箱地址', trigger: 'blur', },
                 ],
+
                 nick_name: [
-                    { required: true, message: '昵称必填', trigger: 'blur', },
+                    { required: true, message: '昵称必填', trigger: 'blur', type: 'error', },
                     { min: 2, message: '至少需要两个字符，一个中文等于两个字符', type: 'warning', trigger: 'blur', },
                     { max: 10, message: '姓名字符长度超出', type: 'warning', trigger: 'blur', },
                 ],
-                validate_code: [{ required: true, message: '验证码必填', type: 'error', trigger: 'blur', },],
 
+                validate_code: [{ required: true, message: '验证码必填', type: 'error', trigger: 'blur', },],
             },
         }
     },
@@ -103,21 +107,24 @@ export default {
     methods: {
         async onRegister({ validateResult, firstError }) {
             if (validateResult === true) {
-                //注册
-                if (validateResult === true) {
-                    const { data: res } = await this.$http.post("", {
-                        username: REGISTER.account,
-                        password: REGISTER.password,
-                    });
-                    if (res.meta.status === 400) {
-                        // ===
-                    } else if (res.meta.status === 200) {
-                        this.is_loading = true;
-                    }
-                } else {
-                    console.log('Errors: ', validateResult);
-                    this.$message.warning(firstError);
+                if (this.REGISTER.account === 'admin' && this.REGISTER.password === '123456') {
+                    this.$message.success({ content: "注册成功！", closeBtn: true });
                 }
+                // 注册
+                // if (validateResult === true) {
+                //     const { data: res } = await this.$http.post("", {
+                //         username: REGISTER.account,
+                //         password: REGISTER.password,
+                //     });
+                //     if (res.meta.status === 400) {
+                //         // ===
+                //     } else if (res.meta.status === 200) {
+                //         this.is_loading = true;
+                //     }
+                // } else {
+                //     console.log('Errors: ', validateResult);
+                //     this.$message.warning(firstError);
+                // }
             }
         },
 
@@ -137,7 +144,6 @@ export default {
 .login_box {
     margin-top: 20px;
 }
-
 
 .t_input_validate_code {
     width: 380px;

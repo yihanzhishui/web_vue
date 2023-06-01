@@ -4,27 +4,29 @@
   
 <script>
 export default {
+    name: 'Map',
+
     mounted() {
-        //   Ò³Ãæ¼ÓÔØÍê,¿ªÊ¼Òì²½ÒıÈë¸ßµÂµØÍ¼
-        //´´½¨ÁËÒ»¸ö»Øµ÷º¯Êı,¸ßµÂµØÍ¼¼ÓÔØÍê±Ï»áµ÷ÓÃ
+        //é¡µé¢åŠ è½½å®Œ,å¼€å§‹å¼‚æ­¥å¼•å…¥é«˜å¾·åœ°å›¾
+        //åˆ›å»ºäº†ä¸€ä¸ªå›è°ƒå‡½æ•°,é«˜å¾·åœ°å›¾åŠ è½½å®Œæ¯•ä¼šè°ƒç”¨
         window.onLoad = function () {
-            // ËùÓĞ¹ØÓÚµØÍ¼µÄÂß¼­È«²¿¶¼ÒªĞ´ÔÚÕâ¸ö»Øµ÷ÀïÃæ
-            // ±£Ö¤¸ßµÂµØÍ¼¼ÓÔØÍê±Ï
+            // æ‰€æœ‰å…³äºåœ°å›¾çš„é€»è¾‘å…¨éƒ¨éƒ½è¦å†™åœ¨è¿™ä¸ªå›è°ƒé‡Œé¢
+            // ä¿è¯é«˜å¾·åœ°å›¾åŠ è½½å®Œæ¯•
             var map = new AMap.Map("container", {
                 center: [104.149000, 30.676612],
                 zoom: 16
             });
         };
-        // keyÊÇÉêÇëµÄÖµ
-        var url =
+        // keyæ˜¯ç”³è¯·çš„å€¼
+        let url =
             "https://webapi.amap.com/maps?v=1.4.15&key=0a72a0fa26c13e8fa8581cbe701c0620&callback=onLoad";
-        //´´½¨Ò»¸ö script domÔªËØ
-        // docĞèÒª²¹È«document
+        //åˆ›å»ºä¸€ä¸ª script domå…ƒç´ 
+        // docéœ€è¦è¡¥å…¨document
         var jsapi = document.createElement("script");
-        //Éè¶¨script±êÇ©ÊôĞÔ
+        //è®¾å®šscriptæ ‡ç­¾å±æ€§
         jsapi.charset = "utf-8";
         jsapi.src = url;
-        //½«APIÎÄ¼şÒıÈëÒ³ÃæÖĞ,¼ÓÔØÍê±ÏÒÔºó»áµ÷ÓÃº¯Êı
+        //å°†APIæ–‡ä»¶å¼•å…¥é¡µé¢ä¸­,åŠ è½½å®Œæ¯•ä»¥åä¼šè°ƒç”¨å‡½æ•°
         document.head.appendChild(jsapi);
     },
 };
@@ -32,6 +34,11 @@ export default {
 
 <style lang="less" scoped>
 #container {
+    width: 100%;
+    height: 100%;
+}
+
+.t_card_main {
     width: 100%;
     height: 100%;
 }

@@ -2,8 +2,8 @@
     <t-layout class="t_layout_main">
         <t-header>
             <t-head-menu value="item1" height="120px">
-                <img slot="logo" width="136" class="logo" src="https://tdesign.gtimg.com/site/baseLogo-light.png"
-                    alt="logo" />
+                <img slot="logo" width="136" class="img_logo"
+                    src="https://github.com/yihanzhishui/PicGo/blob/main/logo.png?raw=true" alt="logo" />
                 <template #operations>
                     <t-switch size="large" :defaultValue="isDark" v-model="isDark" style="margin-right:10px"
                         :onChange="changeThemeMode" :label="['夜间', '白天']">
@@ -64,11 +64,6 @@ export default {
 
 
     methods: {
-        logout() {
-            window.sessionStorage.clear();
-            this.$router.push('/')
-        },
-
         onCloseDialogLogout(logout_visible) {
             this.logout_visible = logout_visible;
         },
@@ -80,7 +75,6 @@ export default {
         // 切换暗色模式
         changeThemeMode() {
             sessionStorage.isDark = this.isDark;
-            console.log("是否dark:" + this.isDark)
             // 设置暗色模式
             this.isDark === true ? document.documentElement.setAttribute('theme-mode', 'dark') : document.documentElement.removeAttribute('theme-mode');
         },
@@ -101,5 +95,10 @@ export default {
 .home_aside {
     padding-top: 50px;
     border-top: 1px solid var(--component-border);
+}
+
+.img_logo {
+    margin-left: 10px;
+    zoom: 200%
 }
 </style>

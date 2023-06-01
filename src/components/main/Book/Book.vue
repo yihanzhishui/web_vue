@@ -61,8 +61,6 @@ export default {
             dialog_visible: false,
             value: 'first',
 
-
-
             // 假设教室人数
             cr_num: 10,
             cr_con: 30,
@@ -77,7 +75,7 @@ export default {
             ],
             room_time_info_columns: [
                 { colKey: 'time', title: '时间段' },
-                { colKey: 'book_status', title: '空闲状态', },
+                { colKey: 'book_status', title: '空闲状态' },
                 { colKey: 'operator', title: '操作' },
             ],
             specific_book_columns: [
@@ -88,7 +86,7 @@ export default {
 
             // 表格内容
             book_content: [
-                { index: 1, building: 'asasd', classroom: 'asdasd', book_status: '空闲', operator: true }
+                { index: 1, building: '东区教学楼', classroom: 'E2B-202', book_status: '空闲', operator: true }
             ],
             specific_book_content_one: [
                 { index: 1, time: '第1~2节', book_status: '否', operator: true },
@@ -101,7 +99,7 @@ export default {
                 { index: 2, time: '第3~4节', book_status: '否', operator: true },
                 { index: 3, time: '第5~6节', book_status: '是', operator: true },
                 { index: 4, time: '第7~8节', book_status: '否', operator: true },
-            ]
+            ],
         }
     },
 

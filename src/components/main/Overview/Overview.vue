@@ -31,21 +31,21 @@ export default {
             recommend: '推荐预约',
             // 表头
             my_book_columns: [
-                { colKey: 'classroom', title: '教室', },
-                { colKey: 'status', title: '是否预约', },
+                { colKey: 'classroom', title: '教室' },
+                { colKey: 'status', title: '是否预约' },
                 { colKey: 'address', title: '地址' },
                 { colKey: 'time', title: '预约时间段' },
             ],
             empty_room_columns: [
-                { colKey: 'classroom', title: '教室', },
-                { colKey: 'empty_status', title: '空闲状态', },
-                { colKey: 'operate', title: '操作', fixed: 'right', },
+                { colKey: 'classroom', title: '教室' },
+                { colKey: 'empty_status', title: '空闲状态' },
+                { colKey: 'operate', title: '操作', fixed: 'right' },
             ],
             recommend_columns: [
-                { colKey: 'classroom', title: '教室', },
-                { colKey: 'empty_status', title: '空闲状态', },
+                { colKey: 'classroom', title: '教室' },
+                { colKey: 'empty_status', title: '空闲状态' },
                 { colKey: 'address', title: '地址' },
-                { colKey: 'operate', title: '操作', fixed: 'right', },
+                { colKey: 'operate', title: '操作', fixed: 'right' },
             ],
             // 表格内容
             my_book_content: [],

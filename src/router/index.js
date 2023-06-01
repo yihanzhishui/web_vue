@@ -7,7 +7,7 @@ import Overview from "@/components/main/Overview/Overview.vue";
 import Search from "@/components/main/Search/Search.vue";
 import Book from "@/components/main/Book/Book.vue";
 import Mine from "@/components/main/Mine/Mine.vue";
-import Map from "@/components/main/Home/Map.vue";
+import Map from "@/components/main/Map/Map.vue";
 
 Vue.use(VueRouter);
 
@@ -28,11 +28,11 @@ const routes = [
     component: Home,
     redirect: "/map",
     children: [
+      { path: "/map", component: Map },
       { path: "/overview", component: Overview },
       { path: "/search", component: Search },
       { path: "/book", component: Book },
       { path: "/mine", component: Mine },
-      { path: "/map", component: Map },
     ],
   },
 ];
@@ -45,7 +45,6 @@ router.beforeEach((to, from, next) => {
   // to 目标
   // from 来源
   if (to.path === "/index") {
-    console.log("###");
     return next();
   }
   // 需修改
