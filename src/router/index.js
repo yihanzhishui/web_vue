@@ -7,7 +7,7 @@ import Overview from "@/components/main/Overview/Overview.vue";
 import Search from "@/components/main/Search/Search.vue";
 import Book from "@/components/main/Book/Book.vue";
 import Mine from "@/components/main/Mine/Mine.vue";
-import Map from "@/components/main/Map/Map.vue";
+import Map from "@/components/main/Map/MapView.vue";
 
 Vue.use(VueRouter);
 
