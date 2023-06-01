@@ -13,8 +13,16 @@ Vue.prototype.$http = axios;
 Vue.prototype.$md5 = md5;
 
 // 访问基路径
-axios.defaults.baseURL = "https://localhost:8080/authority/";
+axios.defaults.baseURL = "/api";
 
+// 设置访问超时
+axios.defaults.timeout = 20000;
+
+// 设置默认请求头
+// axios.defaults.headers.post["Content-Type"] =
+//   "application/x-www-form-urlencoded;charset=UTF-8";
+
+// 显示开发提示
 Vue.config.productionTip = false;
 
 new Vue({

@@ -54,7 +54,6 @@ export default {
                 nick_name: '',
             },
             is_loading: false,
-            validate_image: 'https://tdesign.gtimg.com/demo/demo-image-1.png',
 
             register_rules: {
                 account: [
@@ -86,25 +85,25 @@ export default {
 
     methods: {
         async onRegister({ validateResult, firstError }) {
-            // if (validateResult === true) {
-            //     if (this.REGISTER.account === 'admin' && this.REGISTER.password === '123456') {
-            //         this.$message.success({ content: "注册成功！", closeBtn: true });
-            //     }
-
-            // }
             // 注册
+            let that = this;
             if (validateResult === true) {
-                const { data: res } = await this.$http.post("", {
+                await this.$http.post("/register", {
                     account: this.REGISTER.account,
                     password: this.REGISTER.password,
                     sname: this.REGISTER.nick_name,
+                }).then(function (res) {
+                    // 请求成功
+                    if (res.status === 200) {
+                        that.is_loading = true;
+                        that.$message.success({ content: "注册成功, 请返回登录!" });
+                    }
+                }).catch(function (error) {
+                    // 请求失败的处理
+                    console.log(error)
+                    that.$message.error({ content: "注册出现错误！请稍后重试！" });
+                    that.$router.replace('/500')
                 });
-                if (res.meta.status === 400) {
-
-                } else if (res.meta.status === 200) {
-                    this.is_loading = true;
-                    this.$message.success({ content: "注册成功,请返回登录!", closeBtn: true });
-                }
             } else {
                 console.log('Errors: ', validateResult);
                 this.$message.warning(firstError);

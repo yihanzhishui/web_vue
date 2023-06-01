@@ -18,8 +18,9 @@
                     class="t_input_validate_code">
                     <image-icon slot="prefix-icon"></image-icon>
                 </t-input>
-                <t-image :src="validate_image" fit="cover" class="t_validate_image" shape="round"
-                    @click="refresh_code_img" />
+                <div class="validate_code_box" @click="refresh_code_img()">
+                    <t-image :src="validate_image" fit="cover" class="t_validate_image" shape="round" />
+                </div>
             </t-form-item>
             <t-form-item>
                 <t-button :loading="is_loading" size="large" theme="primary" type="submit" block>登录</t-button>
@@ -54,7 +55,7 @@ export default {
                 validate_code: '',
             },
             is_loading: false,
-            validate_key: localStorage.valdate_key,
+            validate_key: localStorage.validate_key,
 
             // 存储 token
             token: '',
@@ -81,43 +82,43 @@ export default {
 
     mounted() {
         // 组件被挂载时刷新验证码
-        this.refresh();
+        this.refresh_code_img();
     },
 
     methods: {
         // 登录
         async onLogin({ validateResult, firstError }) {
-            // =======================测试Start
-            // if (this.LOGIN.account === 'admin' && this.LOGIN.password === '123456' && this.LOGIN.validate_code === '1234') {
-            //     // console.log(this.account);
-            //     this.is_loading = true;
-            //     this.token = '123';
-            //     this.$message.success({ content: "登陆成功！" });
-            //     // 登陆成功则跳转
-            //     sessionStorage.isDark = this.isDark;
-            //     // console.log(this.$md5(this.LOGIN.password));
-            //     this.$router.push("/home");
-            // }
-            // =======================测试End
-
+            // 表单验证
             if (validateResult === true) {
-                const { data: res } = await this.$http.post("login", {
+                let that = this;
+                await this.$http.post("login", {
                     account: this.LOGIN.account,
-                    password: md5(this.LOGIN.password), // 将密码加密
-                    valiateCode: this.LOGIN.validate_code,
-                    validateKey: this.validate_key,
+                    password: this.$md5(this.LOGIN.password), // 将密码加密
+                    validateCode: this.LOGIN.validate_code,
+                    validateKey: localStorage.validate_key,
+                }).then(function (res) {
+                    // 请求成功
+                    if (res.status === 200) {
+                        console.log(res)
+                        if (res.data === '验证码错误' || res.data === '密码错误' || res.data === '用户名无') {
+                            that.$message.error({ content: res.data });
+                            return
+                        }
+                        that.is_loading = true;
+                        that.$message.success({ content: "登录成功！" });
+                        localStorage.user_id = this.sid;
+                        // sessionStorage.token=res.data
+                        sessionStorage.isDark = this.isDark; // 存储网页是否夜间模式
+                        this.$router.push("/home");
+                    }
+                }).catch(function (error) {
+                    // 请求失败的处理
+                    console.log(error)
+                    that.$message.error({ content: "登陆出现错误！请稍后重试！" });
+                    that.$router.replace('/500')
                 });
-                if (res.meta.status === 400) {
-                    this.$message.warning("用户名或密码错误！");
-                } else if (res.meta.status === 200) {
-                    this.$message.success({ content: "登陆成功！", closeBtn: true });
-                    // 登陆成功则跳转
-                    sessionStorage.isDark = this.isDark; // 存储网页是否夜间模式
-                    this.is_loading = true; // 登录按钮的加载状态
-                    localStorage.user_id = this.sid;
-                    this.$router.push("/home");
-                }
             } else {
+                // 表单验证失败的处理
                 console.log('Errors: ', validateResult);
                 this.$message.warning(firstError);
             }
@@ -127,11 +128,11 @@ export default {
         async refresh_code_img() {
             // 请求验证码
             let that = this;
-            this.$http.get('').then(function (res) {
+            this.$http.get('/kaptcha').then(function (res) {
                 // 更新验证码链接
                 that.validate_image = res.data.captcha;
                 // 存储validateKey
-                localStorage.valdate_key = res.headers.valdateKey;
+                localStorage.validate_key = res.headers.validatekey;
             })
         },
     }
@@ -144,11 +145,11 @@ export default {
 }
 
 .t_input_validate_code {
-    width: 380px;
+    width: 370px;
 }
 
 .t_validate_image {
-    width: 70px;
+    width: 80px;
     height: 40px;
 }
 </style>
