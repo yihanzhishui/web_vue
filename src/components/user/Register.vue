@@ -19,22 +19,10 @@
                     <lock-on-icon slot="prefix-icon"></lock-on-icon>
                 </t-input>
             </t-form-item>
-            <t-form-item name="email">
-                <t-input size="large" clearable v-model="REGISTER.email" placeholder="请输入邮箱" autocomplete="off">
-                    <mail-icon slot="prefix-icon"></mail-icon>
-                </t-input>
-            </t-form-item>
             <t-form-item name="nick_name">
-                <t-input size="large" clearable v-model="REGISTER.nick_name" placeholder="请输入昵称" autocomplete="off">
+                <t-input size="large" clearable v-model="REGISTER.nick_name" placeholder="请输入姓名" autocomplete="off">
                     <user-icon slot="prefix-icon"></user-icon>
                 </t-input>
-            </t-form-item>
-            <t-form-item name="validate_code">
-                <t-input size="large" clearable v-model="REGISTER.validate_code" placeholder="请输入验证码" autocomplete="off"
-                    class="t_input_validate_code">
-                    <image-icon slot="prefix-icon"></image-icon>
-                </t-input>
-                <t-image :src="validate_image" fit="cover" class="t_validate_image" shape="round" />
             </t-form-item>
             <t-form-item>
                 <t-button :loading="is_loading" size="large" theme="primary" type="submit" block>注册</t-button>
@@ -63,9 +51,7 @@ export default {
                 account: '',
                 password: '',
                 confirm_password: '',
-                email: '',
                 nick_name: '',
-                validate_code: '',
             },
             is_loading: false,
             validate_image: 'https://tdesign.gtimg.com/demo/demo-image-1.png',
@@ -88,43 +74,40 @@ export default {
                     { validator: this.rePassword, message: '两次密码不一致', trigger: 'blur', }
                 ],
 
-                email: [
-                    { required: true, message: '邮箱必填', trigger: 'blur', },
-                    { email: { ignore_max_length: true }, message: '请输入正确的邮箱地址', trigger: 'blur', },
-                ],
-
                 nick_name: [
                     { required: true, message: '昵称必填', trigger: 'blur', type: 'error', },
                     { min: 2, message: '至少需要两个字符，一个中文等于两个字符', type: 'warning', trigger: 'blur', },
                     { max: 10, message: '姓名字符长度超出', type: 'warning', trigger: 'blur', },
                 ],
-
-                validate_code: [{ required: true, message: '验证码必填', type: 'error', trigger: 'blur', },],
             },
         }
     },
 
+
     methods: {
         async onRegister({ validateResult, firstError }) {
+            // if (validateResult === true) {
+            //     if (this.REGISTER.account === 'admin' && this.REGISTER.password === '123456') {
+            //         this.$message.success({ content: "注册成功！", closeBtn: true });
+            //     }
+
+            // }
+            // 注册
             if (validateResult === true) {
-                if (this.REGISTER.account === 'admin' && this.REGISTER.password === '123456') {
-                    this.$message.success({ content: "注册成功！", closeBtn: true });
+                const { data: res } = await this.$http.post("", {
+                    account: this.REGISTER.account,
+                    password: this.REGISTER.password,
+                    sname: this.REGISTER.nick_name,
+                });
+                if (res.meta.status === 400) {
+
+                } else if (res.meta.status === 200) {
+                    this.is_loading = true;
+                    this.$message.success({ content: "注册成功,请返回登录!", closeBtn: true });
                 }
-                // 注册
-                // if (validateResult === true) {
-                //     const { data: res } = await this.$http.post("", {
-                //         username: REGISTER.account,
-                //         password: REGISTER.password,
-                //     });
-                //     if (res.meta.status === 400) {
-                //         // ===
-                //     } else if (res.meta.status === 200) {
-                //         this.is_loading = true;
-                //     }
-                // } else {
-                //     console.log('Errors: ', validateResult);
-                //     this.$message.warning(firstError);
-                // }
+            } else {
+                console.log('Errors: ', validateResult);
+                this.$message.warning(firstError);
             }
         },
 

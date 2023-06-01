@@ -70,14 +70,12 @@ export default {
 
         // 获取空教室数据
         async getEmptyRoom() {
-            const { data: res } = await this.$http.post("", {
-                // username: LOGIN.account,
-                // password: LOGIN.password,
-            });
+            const { data: res } = await this.$http.get("queryEmpty");
             if (res.meta.status === 400) {
                 this.$message.error({ content: "获取数据失败", closeBtn: true });
             } else if (res.meta.status === 200) {
                 this.$message.success({ content: "获取数据成功", closeBtn: true });
+                this.empty_room = data;
             }
         },
 

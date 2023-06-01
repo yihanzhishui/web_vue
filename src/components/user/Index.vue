@@ -27,7 +27,6 @@
 							<template #label>
 								<icon name="user-add" style="margin-right: 4px" /> 注册
 							</template>
-							<!-- getData获取从子组件获取数据 -->
 							<Register />
 						</t-tab-panel>
 					</t-tabs>

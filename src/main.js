@@ -13,7 +13,7 @@ Vue.prototype.$http = axios;
 Vue.prototype.$md5 = md5;
 
 // 访问基路径
-axios.defaults.baseURL = "https://lianghj.top:8888/api/private/v1/";
+axios.defaults.baseURL = "https://localhost:8080/authority/";
 
 Vue.config.productionTip = false;
 
