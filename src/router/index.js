@@ -69,6 +69,7 @@ const routes = [
     meta: { title: "服务器内部错误" },
     component: ServerError,
   },
+
 ];
 
 const router = new VueRouter({

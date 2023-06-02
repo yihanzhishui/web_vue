@@ -4,7 +4,14 @@
             <t-card :title="my_book" header-bordered>
                 <!-- 我的预约-表格 -->
                 <t-table rowKey="index" :data="my_book_content" :columns="my_book_columns" :stripe="true" :bordered="true"
-                    :hover="true" cellEmptyContent="-" resizable></t-table>
+                    :hover="true" cellEmptyContent="-" resizable>
+                    <template #operator="{ row }">
+                        <t-button theme="danger" @click="cancelBook(row)">
+                            取消预约
+                        </t-button>
+                        <CancelBook :visible.sync="visible_cancel_book" @onCloseDialogCancel="onCloseDialogCancel" />
+                    </template>
+                </t-table>
             </t-card>
             <t-card :title="empty_room" header-bordered style="margin-top:20px">
                 <!-- 空教室-表格 -->
@@ -22,19 +29,30 @@
 
 <script>
 
+import CancelBook from '@/components/main/Overview/cancelBook.vue'
+
 export default {
+
+    name: 'Overview',
+
+    components: {
+        CancelBook
+    },
+
     data() {
         return {
             title: '概览',
             my_book: '我的预约',
             empty_room: '空教室',
             recommend: '推荐预约',
+            visible_cancel_book: false,
             // 表头
             my_book_columns: [
                 { colKey: 'classroom', title: '教室' },
                 { colKey: 'status', title: '是否预约' },
                 { colKey: 'address', title: '地址' },
                 { colKey: 'time', title: '预约时间段' },
+                { colKey: 'operator', title: '操作' }
             ],
             empty_room_columns: [
                 { colKey: 'classroom', title: '教室' },
