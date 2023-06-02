@@ -54,29 +54,43 @@ export default {
         }
     },
 
+    mounted() {
+        this.getMyBook();
+        this.getEmptyRoom();
+        // this.getRecomandBook();
+    },
+
     methods: {
         // 获取我的预约表格数据
         async getMyBook() {
-            const { data: res } = await this.$http.post("", {
-                // username: LOGIN.account,
-                // password: LOGIN.password,
-            });
-            if (res.meta.status === 400) {
-                this.$message.error({ content: "获取数据失败", closeBtn: true });
-            } else if (res.meta.status === 200) {
-                this.$message.success({ content: "获取数据成功", closeBtn: true });
-            }
+            let that = this;
+            console.log(sessionStorage.user_id)
+            await this.$http.post("findReservationBySid", {
+                sid: sessionStorage.user_id
+            })
+                .then(function (res) {
+                    // 请求成功
+                    that.my_book = res.data
+                })
+                .catch(function (error) {
+                    // 请求失败的处理
+                    that.$router.replace('/500')
+                });
         },
 
         // 获取空教室数据
         async getEmptyRoom() {
-            const { data: res } = await this.$http.get("queryEmpty");
-            if (res.meta.status === 400) {
-                this.$message.error({ content: "获取数据失败", closeBtn: true });
-            } else if (res.meta.status === 200) {
-                this.$message.success({ content: "获取数据成功", closeBtn: true });
-                this.empty_room = data;
-            }
+            let that = this;
+            await this.$http.post("queryEmpty")
+                .then(function (res) {
+                    // 请求成功
+                    that.empty_room = res.data;
+                })
+                .catch(function (error) {
+                    // 请求失败的处理
+                    that.$router.replace('/500')
+                });;
+
         },
 
 
