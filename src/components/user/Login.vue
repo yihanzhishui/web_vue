@@ -100,7 +100,8 @@ export default {
                     .then(function (res) {
                         // 请求成功
                         if (res.status === 200) {
-                            if (res.data === '验证码错误' || res.data === '密码错误' || res.data === '用户名无') {
+                            if (res.data === '验证码错误' || res.data === '密码错误' || res.data === '用户未注册') {
+                                that.refresh_code_img()
                                 that.$message.error({ content: res.data });
                                 return
                             }
@@ -112,11 +113,11 @@ export default {
                             that.$router.push("/home");
                         }
                     })
-                    .catch(function (error) {
-                        // 请求失败的处理
-                        that.$message.error({ content: "登陆出现错误！请稍后重试！" });
-                        that.$router.replace('/500')
-                    });
+                // .catch(function (error) {
+                //     // 请求失败的处理
+                //     that.$message.error({ content: "登陆出现错误！请稍后重试！" });
+                //     that.$router.replace('/500')
+                // });
             } else {
                 // 表单验证失败的处理
                 console.log('Errors: ', validateResult);
