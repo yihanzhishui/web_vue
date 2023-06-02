@@ -26,9 +26,6 @@ axios.interceptors.request.use(
     return config;
   },
   function (error) {
-    if (error.message.includes("timeout")) {
-      that.message.error("超时");
-    }
     // return Promise.reject(error);
   }
 );
@@ -40,7 +37,6 @@ axios.interceptors.response.use(
   },
   function (error) {
     console.log(error.message);
-    console.log(error.message.includes("timeout"));
     if (error.message.includes("timeout")) {
     }
     // return Promise.reject(error);

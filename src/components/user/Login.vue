@@ -1,7 +1,7 @@
 <template>
     <t-space style="width: 450px">
         <t-form :data="LOGIN" :rules="login_rules" ref="login_form" @submit="onLogin" :colon="true" :labelWidth="0"
-            class="login_box">
+            class="login_box" requiredMark>
             <t-form-item name="account">
                 <t-input size="large" clearable v-model="LOGIN.account" placeholder="请输入账户名" autocomplete="off">
                     <desktop-icon slot="prefix-icon"></desktop-icon>
@@ -23,7 +23,10 @@
                 </div>
             </t-form-item>
             <t-form-item>
-                <t-button :loading="is_loading" size="large" theme="primary" type="submit" block>登录</t-button>
+                <t-space size="20px">
+                    <t-button theme="default" variant="base" size="large" type="reset">重置</t-button>
+                    <t-button :loading="is_loading" size="large" theme="primary" type="submit" block>登录</t-button>
+                </t-space>
             </t-form-item>
         </t-form>
     </t-space>
@@ -90,6 +93,7 @@ export default {
         async onLogin({ validateResult, firstError }) {
             // 表单验证
             if (validateResult === true) {
+                this.is_loading = true;
                 let that = this;
                 await this.$http.post("login", {
                     account: this.LOGIN.account,
@@ -103,9 +107,9 @@ export default {
                             if (res.data === '验证码错误' || res.data === '密码错误' || res.data === '用户未注册') {
                                 that.refresh_code_img()
                                 that.$message.error({ content: res.data });
+                                that.is_loading = false;
                                 return
                             }
-                            that.is_loading = true;
                             that.$message.success({ content: "登录成功！" });
                             sessionStorage.user_id = res.headers.sid;
                             sessionStorage.token = res.headers.token;
@@ -113,11 +117,11 @@ export default {
                             that.$router.push("/home");
                         }
                     })
-                // .catch(function (error) {
-                //     // 请求失败的处理
-                //     that.$message.error({ content: "登陆出现错误！请稍后重试！" });
-                //     that.$router.replace('/500')
-                // });
+                    .catch(function (error) {
+                        // 请求失败的处理
+                        that.$message.error({ content: "登陆出现错误！请稍后重试！" });
+                        that.$router.replace('/403')
+                    });
             } else {
                 // 表单验证失败的处理
                 console.log('Errors: ', validateResult);

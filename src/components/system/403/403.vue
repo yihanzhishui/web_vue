@@ -1,11 +1,13 @@
+
 <template>
-    <Result title="403 Forbidden" tip="抱歉，您无权限访问此页面">
-        <t-button @click="() => $router.push('/home')">返回首页</t-button>
+    <!-- 其实是Forbidden，但这里表示一下出错的页面 -->
+    <Result title="Other Error" tip="抱歉，访问出问题啦">
+        <t-button @click="() => $router.go(-1)">返回上一级</t-button>
     </Result>
 </template>
   
 <script>
-import Result from '@/components/result/index.vue';
+import Result from '@/components/system/result.vue';
 
 export default {
     name: 'Result403',

@@ -88,7 +88,17 @@ export default {
                 const { data: res } = await this.$http.post("", {
                     // username: LOGIN.account,
                     // password: LOGIN.password,
-                });
+                })
+                    .then(function (res) {
+                        // 请求成功
+
+                    })
+                    .catch(function (error) {
+                        // 请求失败的处理
+                        console.log(error)
+                        that.$message.error({ content: "注册出现错误！请稍后重试！" });
+                        that.$router.replace('/403')
+                    });
                 if (res.meta.status === 400) {
 
                 } else if (res.meta.status === 200) {

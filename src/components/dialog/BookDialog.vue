@@ -1,6 +1,6 @@
 <template>
-    <t-dialog theme="default" :header="row.building + '-' + row.classroom" body="对话框内容" v-show="local_visible"
-        cancelBtn="取消" :confirmBtn="null" :onClose="onCloseDialog">
+    <t-dialog theme="default" :header="row.classroom" body="对话框内容" visible.sync="local_visible" cancelBtn="取消"
+        :confirmBtn="null" :onClose="onCloseDialog">
         <t-tabs :value="value" @change="(newValue) => (value = newValue)">
             <t-tab-panel value="first">
                 <template #label>
@@ -61,37 +61,68 @@ export default {
             ],
             specific_book_columns: [
                 { colKey: 'time', title: '时间段' },
-                { colKey: 'book_status', title: '是否预约' },
+                { colKey: 'book_status', title: '是否可预约' },
                 { colKey: 'operator', title: '操作' },
             ],
 
             specific_book_content_one: [
-                { index: 1, time: '第1~2节', book_status: '否', operator: true },
-                { index: 2, time: '第3~4节', book_status: '否', operator: true },
-                { index: 3, time: '第5~6节', book_status: '是', operator: true },
-                { index: 4, time: '第7~8节', book_status: '否', operator: true },
+                { index: 1, time: '第1~2节', book_status: '', operator: '' },
+                { index: 2, time: '第3~4节', book_status: '', operator: '' },
+                { index: 3, time: '第5~6节', book_status: '', operator: '' },
+                { index: 4, time: '第7~8节', book_status: '', operator: '' },
             ],
             specific_book_content_two: [
-                { index: 1, time: '第1~2节', book_status: '是', operator: true },
-                { index: 2, time: '第3~4节', book_status: '否', operator: true },
-                { index: 3, time: '第5~6节', book_status: '是', operator: true },
-                { index: 4, time: '第7~8节', book_status: '否', operator: true },
+                { index: 1, time: '第1~2节', book_status: '', operator: '' },
+                { index: 2, time: '第3~4节', book_status: '', operator: '' },
+                { index: 3, time: '第5~6节', book_status: '', operator: '' },
+                { index: 4, time: '第7~8节', book_status: '', operator: '' },
             ],
         }
     },
 
+
+    created() {
+        this.getClassroomStatus();
+        console.log("BookDialog创建完成")
+    },
+
     methods: {
         async Book(row) {
-            this.$message.success({ content: "预约成功", closeBtn: true });
-            // const { data: res } = await this.$http.post("", {
-            //     // username: LOGIN.account,
-            //     // password: LOGIN.password,
-            // });
-            // if (res.meta.status === 400) {
-            //     this.$message.error({ content: "预约失败", closeBtn: true });
-            // } else if (res.meta.status === 200) {
-            //     this.$message.success({ content: "预约成功", closeBtn: true });
-            // }
+            let that = this;
+            await this.$http.post("addReservation", {
+                cid: row.cid
+            }).then(function (res) {
+                // 请求成功
+
+                for (let i = 0; i < res.data.length; i++) {
+                    specific_book_content_one[i % 4].book_status = res.data[i % 4]
+                    specific_book_content_two[i % 4].book_status = res.data[(i % 4) + 4]
+                }
+
+            }).catch(function (error) {
+                // 请求失败的处理
+                that.$message.error({ content: "出现错误！请稍后重试！" });
+                that.$router.replace('/403')
+            });
+        },
+
+        async getClassroomStatus() {
+            let that = this;
+            await this.$http.post("whetherReserve", {
+                cid: row.cid
+            }).then(function (res) {
+                // 请求成功
+                for (let i = 0; i < res.data.length; i++) {
+                    specific_book_content_one[i % 4].book_status = res.data[i % 4]
+                    specific_book_content_two[i % 4].book_status = res.data[(i % 4) + 4]
+                }
+            }).catch(function (error) {
+                // 请求失败的处理
+                that.$message.error({ content: "出现错误！请稍后重试！" });
+                that.$router.replace('/403')
+            });
+
+            console.log(that.specific_book_content_one)
         },
 
         onCloseDialog() {
@@ -103,7 +134,7 @@ export default {
     watch: {
         dialog_visible(news, olds) {
             this.local_visible = news
-        }
+        },
     },
 
 }

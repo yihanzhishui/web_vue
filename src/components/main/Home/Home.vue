@@ -46,7 +46,7 @@
 <script>
 
 import { Icon } from 'tdesign-icons-vue';
-import Logout from '@/components/main/Home/Logout.vue'
+import Logout from '@/components/dialog/Logout.vue'
 
 export default {
     components: {

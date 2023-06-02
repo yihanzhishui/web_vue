@@ -25,7 +25,10 @@
                 </t-input>
             </t-form-item>
             <t-form-item>
-                <t-button :loading="is_loading" size="large" theme="primary" type="submit" block>注册</t-button>
+                <t-space size="20px">
+                    <t-button theme="default" variant="base" size="large" type="reset">重置</t-button>
+                    <t-button :loading="is_loading" size="large" theme="primary" type="submit" block>注册</t-button>
+                </t-space>
             </t-form-item>
         </t-form>
     </t-space>
@@ -88,22 +91,26 @@ export default {
             // 注册
             let that = this;
             if (validateResult === true) {
+                this.is_loading = true;
                 await this.$http.post("/register", {
                     account: this.REGISTER.account,
                     password: this.$md5(this.REGISTER.password),
                     sname: this.REGISTER.nick_name,
-                }).then(function (res) {
-                    // 请求成功
-                    if (res.status === 200) {
-                        that.is_loading = true;
-                        that.$message.success({ content: "注册成功, 请返回登录!" });
-                    }
-                }).catch(function (error) {
-                    // 请求失败的处理
-                    console.log(error)
-                    that.$message.error({ content: "注册出现错误！请稍后重试！" });
-                    that.$router.replace('/500')
-                });
+                })
+                    .then(function (res) {
+                        // 请求成功
+                        if (res.status === 200) {
+                            that.is_loading = true;
+                            that.$message.success({ content: "注册成功, 请返回登录!" });
+                            that.is_loading = false;
+                        }
+                    })
+                    .catch(function (error) {
+                        // 请求失败的处理
+                        console.log(error)
+                        that.$message.error({ content: "注册出现错误！请稍后重试！" });
+                        that.$router.replace('/403')
+                    });
             } else {
                 console.log('Errors: ', validateResult);
                 this.$message.warning(firstError);
@@ -125,14 +132,5 @@ export default {
 <style lang="less" scoped>
 .login_box {
     margin-top: 20px;
-}
-
-.t_input_validate_code {
-    width: 380px;
-}
-
-.t_validate_image {
-    width: 70px;
-    height: 40px;
 }
 </style>

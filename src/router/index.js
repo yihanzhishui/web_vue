@@ -11,6 +11,7 @@ import Map from "@/components/main/Map/MapView.vue";
 import NotFound from "@/components/system/404/404.vue";
 import NetworkError from "@/components/system/network_error/network_error.vue";
 import ServerError from "@/components/system/500/500.vue";
+import Result403 from "@/components/system/403/403.vue";
 
 Vue.use(VueRouter);
 
@@ -26,6 +27,8 @@ const routes = [
     component: Index,
     meta: {
       is_login: true,
+      // 不允许后退
+      allowBack: false,
     },
   },
 
@@ -55,6 +58,12 @@ const routes = [
     component: NotFound,
   },
 
+  {
+    path: "/403",
+    name: "other error",
+    component: Result403,
+  },
+
   // 网络故障
   {
     path: "/network_error",
@@ -69,7 +78,6 @@ const routes = [
     meta: { title: "服务器内部错误" },
     component: ServerError,
   },
-
 ];
 
 const router = new VueRouter({
@@ -81,10 +89,24 @@ router.beforeEach((to, from, next) => {
   // to 目标
   // from 来源
   // 去登陆注册页,直接放行
+
+  let allowBack = true; //  默认允许回退
+
+  // 定义了allowBack的
+  if (to.meta.allowBack !== undefined) {
+    allowBack = to.meta.allowBack;
+  }
+
+  // 不允许回退
+  if (!allowBack) {
+    history.pushState(null, null, location.href);
+  }
+
   if (to.path === "/index") {
     return next();
   }
 
+  // 没有token，拦下来
   if (!sessionStorage.token) {
     return next("/index");
   }

@@ -24,8 +24,8 @@
 <script>
 
 import { Edit1Icon } from 'tdesign-icons-vue'
-import UpdatePassword from '@/components/main/Mine/UpdatePassword.vue'
-import Logout from '@/components/main/Home/Logout.vue'
+import UpdatePassword from '@/components/dialog/UpdatePassword.vue'
+import Logout from '@/components/dialog/Logout.vue'
 
 export default {
     name: 'Mine',

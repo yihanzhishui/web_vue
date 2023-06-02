@@ -2,11 +2,16 @@
     <t-card :title="title" header-bordered class="t_card_main">
         <template>
             <t-card :title="classroom" header-bordered>
-                <t-table rowKey="index" :data="book_content" :columns="book_content_columns" :stripe="true" :bordered="true"
-                    :hover="true" cellEmptyContent="-" resizable
+                <t-table rowKey="index" :data="book_content" :columns="book_content_columns" :bordered="true" :hover="true"
+                    cellEmptyContent="-" resizable
                     :pagination="{ defaultPageSize: 10, defaultCurrent: 1, total: book_content.length }">
+
+                    <template #book_status="{ row }">
+                        <t-progress theme="plump" :color="row.color" :percentage="row.percentage" />
+                    </template>
+
                     <template #operator="{ row }">
-                        <t-button theme="primary" :disabled="isBtnDisabled(row.book_status)"
+                        <t-button theme="primary" :disabled="isBtnDisabled(row.percentage)"
                             @click="book_dialog_visible = true">
                             预约
                         </t-button>
@@ -22,7 +27,7 @@
 <script>
 
 
-import BookDialog from '../Overview/BookDialog.vue';
+import BookDialog from '@/components/dialog/BookDialog.vue';
 
 
 export default {
@@ -37,31 +42,85 @@ export default {
             classroom: '教室名单',
             book_dialog_visible: false,
             value: 'first',
-
             // 表头
             book_content_columns: [
                 { colKey: 'building', title: '楼栋' },
                 { colKey: 'classroom', title: '教室' },
                 { colKey: 'book_status', title: '空闲状态' },
+                { colKey: 'people_number', title: '当前人数' },
                 { colKey: 'operator', title: '操作' },
             ],
 
             // 表格内容
-            book_content: [
-                // { index: 1, building: '东区教学楼', classroom: 'E2B-202', book_status: '空闲', operator: true }
-            ],
+            book_content: [],
         }
+    },
+
+    mounted() {
+        this.getAllClassroom()
     },
 
     methods: {
         //预约按钮是否可用
-        isBtnDisabled(status) {
-            return status === '空闲' ? false : true;
+        isBtnDisabled(num) {
+            return num === 100 ? true : false;
         },
 
         onCloseDialog(dialog_visible) {
             this.book_dialog_visible = dialog_visible;
-        }
+        },
+
+        // 获取所有的教室
+        async getAllClassroom() {
+            let that = this;
+            await this.$http.post("findAllClassroom")
+                .then(res => {
+                    // 请求成功
+                    res.data.forEach(item => {
+                        that.$http.post('queryOccupancy', {
+                            date: that.formatDate(),
+                            cid: item.cid
+                        }).then(res => {
+                            Object.assign(item, { percentage: (res.data * 100) / 4 });
+                            switch (res.data) {
+                                case 1:
+                                    Object.assign(item, { color: '#0052d9' })
+                                    break;
+                                case 2:
+                                    Object.assign(item, { color: '#078d5c' })
+                                    break;
+                                case 3:
+                                    Object.assign(item, { color: '#ed7b2f' })
+                                    break;
+                                case 4:
+                                    Object.assign(item, { color: '#c9353f' })
+                                    break;
+                                default:
+                                    Object.assign(item, { color: '#eeeeee' })
+                                    break;
+                            }
+                        })
+                        Object.assign(item, { classroom: item.building + '-' + item.room })
+
+                        that.book_content = res.data;
+                    })
+                })
+                .catch(function (error) {
+                    // 请求失败的处理
+                    that.$message.error('获取信息失败, 请稍后重试！')
+                    that.$router.replace('/403')
+                });
+        },
+
+        // 获取格式化后的时间字符串
+        formatDate() {
+            let date = new Date();
+            let year = date.getFullYear(),
+                month = date.getMonth() + 1,
+                day = date.getDate()
+            let newTime = year + '-' + month + '-' + day
+            return newTime;
+        },
     }
 };
 

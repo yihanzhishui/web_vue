@@ -20,6 +20,11 @@ export default defineComponent({
     window.addEventListener('online', () => {
       window.location.href = sessionStorage.locationUrl
     });
+    window.onpopstate = () => {
+      if (!this.allowBack) {    //    这个allowBack 是存在vuex里面的变量
+        history.go(1)
+      }
+    };
   },
 })
 </script>
