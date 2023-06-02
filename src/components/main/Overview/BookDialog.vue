@@ -1,6 +1,6 @@
 <template>
-    <t-dialog theme="default" :header="classroom_name" body="对话框内容" v-show="local_book_visible" cancelBtn="取消"
-        :onClose="onCloseDialogBook" :confirmBtn="null">
+    <t-dialog theme="default" :header="row.building + '-' + row.classroom" body="对话框内容" v-show="local_visible"
+        cancelBtn="取消" :confirmBtn="null" :onClose="onCloseDialog">
         <t-tabs :value="value" @change="(newValue) => (value = newValue)">
             <t-tab-panel value="first">
                 <template #label>
@@ -35,23 +35,25 @@
 </template>
 
 <script>
+
+
 export default {
 
     props: {
-        row: Object,
-        dialog_visible: Boolean
+        dialog_visible: {
+            type: Boolean,
+            default: false
+        },
+        row: {
+            type: Object,
+            default: null
+        }
     },
 
     data() {
         return {
+            local_visible: false,
             value: 'first',
-            local_book_visible: false,
-
-            // 假设教室人数
-            cr_num: 10,
-            cr_con: 30,
-            classroom_name: '',
-
             room_time_info_columns: [
                 { colKey: 'time', title: '时间段' },
                 { colKey: 'book_status', title: '空闲状态' },
@@ -59,7 +61,7 @@ export default {
             ],
             specific_book_columns: [
                 { colKey: 'time', title: '时间段' },
-                { colKey: 'book_status', title: '空闲状态' },
+                { colKey: 'book_status', title: '是否预约' },
                 { colKey: 'operator', title: '操作' },
             ],
 
@@ -81,29 +83,31 @@ export default {
     methods: {
         async Book(row) {
             this.$message.success({ content: "预约成功", closeBtn: true });
-            const { data: res } = await this.$http.post("", {
-                // username: LOGIN.account,
-                // password: LOGIN.password,
-            });
-            if (res.meta.status === 400) {
-                this.$message.error({ content: "预约失败", closeBtn: true });
-            } else if (res.meta.status === 200) {
-                this.$message.success({ content: "预约成功", closeBtn: true });
-            }
+            // const { data: res } = await this.$http.post("", {
+            //     // username: LOGIN.account,
+            //     // password: LOGIN.password,
+            // });
+            // if (res.meta.status === 400) {
+            //     this.$message.error({ content: "预约失败", closeBtn: true });
+            // } else if (res.meta.status === 200) {
+            //     this.$message.success({ content: "预约成功", closeBtn: true });
+            // }
         },
 
-        onCloseDialogBook() {
-            this.local_book_visible = false;
-            this.$emit('onCloseDialogBook', false);
+        onCloseDialog() {
+            this.local_visible = false;
+            this.$emit('onCloseDialog', false);
         },
     },
 
     watch: {
         dialog_visible(news, olds) {
-            this.local_book_visible = news
+            this.local_visible = news
         }
     },
+
 }
+
 </script>
 
-<style></style>
+<style lang="less" scoped></style>

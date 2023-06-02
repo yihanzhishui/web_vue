@@ -4,8 +4,7 @@
             <t-card :title="my_book" header-bordered>
                 <!-- 我的预约-表格 -->
                 <t-table rowKey="index" :data="my_book_content" :columns="my_book_columns" :stripe="true" :bordered="true"
-                    :hover="true" cellEmptyContent="-" resizable
-                    :pagination="{ defaultCurrent: 1, defaultPageSize: 3, total: my_book_content.length }">
+                    :hover="true" cellEmptyContent="-" resizable max-height="150" table-layout="fixed" size="small">
                     <template #operator="{ row }">
                         <t-popconfirm theme="warning" content="确认取消预约吗？" v-model="row.visible_cancel_book"
                             @confirm="cancelBook(row)">
@@ -19,24 +18,36 @@
             <t-card :title="empty_room" header-bordered style="margin-top:20px">
                 <!-- 空教室-表格 -->
                 <t-table rowKey="index" :data="empty_room_content" :columns="empty_room_columns" :stripe="true"
-                    :bordered="true" :hover="true" cellEmptyContent="-" resizable
-                    :pagination="{ defaultCurrent: 1, defaultPageSize: 3, total: empty_room_content.length }">
+                    :bordered="true" :hover="true" cellEmptyContent="-" resizable max-height="150" table-layout="fixed"
+                    size="small">
+
                 </t-table>
             </t-card>
             <t-card :title="recommend" header-bordered style="margin-top:20px">
                 <!-- 推荐预约-表格 -->
                 <t-table rowKey="index" :data="recommend_content" :columns="recommend_columns" :stripe="true"
-                    :bordered="true" :hover="true" cellEmptyContent="-" resizable></t-table>
+                    :bordered="true" :hover="true" cellEmptyContent="-" resizable max-height="150" table-layout="fixed"
+                    size="small">
+                    <template #operator="{ row }">
+                        <t-button theme="primary" @click="book_dialog_visible = true" size="small">
+                            预约
+                        </t-button>
+                        <BookDialog :row="row" :visible.sync="book_dialog_visible" :dialog_visible="book_dialog_visible"
+                            @onCloseDialog="onCloseDialog" />
+                    </template>
+                </t-table>
             </t-card>
         </template>
     </t-card>
 </template>
-
 <script>
-
+import BookDialog from './BookDialog.vue'
 
 export default {
 
+    components: {
+        BookDialog
+    },
     name: 'Overview',
 
     data() {
@@ -45,6 +56,7 @@ export default {
             my_book: '我的预约',
             empty_room: '空教室',
             recommend: '推荐预约',
+            book_dialog_visible: false,
             visible_cancel_book: false,
             // 表头
             my_book_columns: [
@@ -52,7 +64,6 @@ export default {
                 { colKey: 'address', title: '地址' },
                 { colKey: 'time', title: '预约时间段' },
                 { colKey: 'operator', title: '操作' },
-                // { colKey: 'visible_cancel_book', title: '是否显示', default: false },
             ],
             empty_room_columns: [
                 { colKey: 'classroom', title: '教室' },
@@ -62,11 +73,15 @@ export default {
                 { colKey: 'classroom', title: '教室' },
                 { colKey: 'empty_status', title: '空闲状态' },
                 { colKey: 'address', title: '地址' },
+                { colKey: 'operator', title: '操作' },
+
             ],
             // 表格内容
             my_book_content: [],
             empty_room_content: [],
-            recommend_content: [],
+            recommend_content: [
+                {}
+            ],
         }
     },
 
@@ -128,7 +143,6 @@ export default {
                     // 请求失败的处理
                     that.$router.replace('/500')
                 });;
-
         },
 
 
@@ -166,11 +180,14 @@ export default {
                     that.$router.replace('/500')
                 });
 
-
         },
 
         onCloseDialogCancel(visible_cancel_book) {
             this.visible_cancel_book = visible_cancel_book
+        },
+
+        onCloseDialog(book_doalog_visible) {
+            this.book_dialog_visible = book_doalog_visible
         },
     }
 };
