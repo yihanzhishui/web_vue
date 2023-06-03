@@ -83,7 +83,6 @@ export default {
 
     created() {
         this.getClassroomStatus();
-        console.log("BookDialog创建完成")
     },
 
     methods: {
@@ -109,20 +108,18 @@ export default {
         async getClassroomStatus() {
             let that = this;
             await this.$http.post("whetherReserve", {
-                cid: row.cid
+                cid: that.row.cid
             }).then(function (res) {
                 // 请求成功
-                for (let i = 0; i < res.data.length; i++) {
+                for (let i = 0; i < 4; i++) {
                     specific_book_content_one[i % 4].book_status = res.data[i % 4]
                     specific_book_content_two[i % 4].book_status = res.data[(i % 4) + 4]
                 }
             }).catch(function (error) {
                 // 请求失败的处理
                 that.$message.error({ content: "出现错误！请稍后重试！" });
-                that.$router.replace('/403')
+                that.$router.push('/403')
             });
-
-            console.log(that.specific_book_content_one)
         },
 
         onCloseDialog() {

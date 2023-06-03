@@ -133,12 +133,16 @@ export default {
         async refresh_code_img() {
             // 请求验证码
             let that = this;
-            this.$http.get('/kaptcha').then(function (res) {
-                // 更新验证码链接
-                that.validate_image = res.data.captcha;
-                // 存储validateKey
-                localStorage.validate_key = res.headers.validatekey;
-            })
+            this.$http.get('/kaptcha')
+                .then(res => {
+                    // 更新验证码链接
+                    that.validate_image = res.data.captcha;
+                    // 存储validateKey
+                    localStorage.validate_key = res.headers.validatekey;
+                }).catch(error => {
+                    that.$message.error('获取验证码出错！');
+                    console.log(error)
+                })
         },
     }
 }
