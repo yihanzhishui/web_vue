@@ -4,7 +4,6 @@
             <t-card :title="title" hover-shadow class="t_card_box">
                 <t-list size="large">
                     <t-list-item>昵称 : {{ user_info.nick_name }}</t-list-item>
-                    <t-list-item>邮箱 : {{ user_info.email }}</t-list-item>
                     <t-list-item>账号 : {{ user_info.account }}</t-list-item>
                 </t-list>
                 <t-button variant="outline" theme="danger" class="logout_btn" @click="logout_visible = true">退出登录</t-button>
@@ -41,25 +40,31 @@ export default {
             logout_visible: false,
             user_info: {
                 nick_name: '------',
-                email: '------@xx.com',
                 account: '------',
+
             },
             logout_visible: false,
         }
+    },
+
+    mounted() {
+        this.getInfo()
     },
 
     methods: {
 
         // 获取用户信息
         async getInfo() {
-            const { data: res } = await this.$http.post("", {
-                // username: LOGIN.account,
-                // password: LOGIN.password,
-            });
-            if (data.status === 200) {
-                this.$message.success({ content: "获取数据成功", closeBtn: true });
-            } else if (data.status === 400) {
-                this.$message.error({ content: "获取数据失败", closeBtn: true });
+            try {
+                // 发送获取教室状态的请求
+                const res = await this.$http.post("findStudentById", {
+                    sid: sessionStorage.user_id
+                });
+                this.user_info['nick_name'] = res.data.sname;
+                this.user_info['account'] = res.data.account;
+            } catch (error) {
+                console.log(error);
+                this.$message.error('获取教室状态失败，请稍后重试！');
             }
         },
 

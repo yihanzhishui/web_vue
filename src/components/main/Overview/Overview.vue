@@ -3,8 +3,8 @@
         <template>
             <t-card :title="my_book" header-bordered>
                 <!-- 我的预约-表格 -->
-                <t-table rowKey="index" :data="my_book_content" :columns="my_book_columns" :stripe="true" :bordered="true"
-                    :hover="true" cellEmptyContent="-" resizable max-height="150" table-layout="fixed" size="small">
+                <t-table rowKey="index" :data="my_book_content" :columns="my_book_columns" :bordered="true" :hover="true"
+                    cellEmptyContent="-" resizable max-height="150" table-layout="fixed" size="small">
 
                     <template #operator="{ row }">
                         <t-popconfirm theme="warning" content="确认取消预约吗？" v-model="row.visible_cancel_book"
@@ -18,30 +18,31 @@
             </t-card>
             <t-card :title="empty_room" header-bordered style="margin-top:20px">
                 <!-- 空教室-表格 -->
-                <t-table rowKey="index" :data="empty_room_content" :columns="empty_room_columns" :stripe="true"
-                    :bordered="true" :hover="true" cellEmptyContent="-" resizable max-height="150" table-layout="fixed"
+                <t-table rowKey="index" :data="empty_room_content" :columns="empty_room_columns" :bordered="true"
+                    :hover="true" cellEmptyContent="-" resizable max-height="150" table-layout="fixed"
                     size="small"></t-table>
             </t-card>
             <t-card :title="recommend" header-bordered style="margin-top:20px">
                 <!-- 推荐预约-表格 -->
-                <t-table rowKey="index" :data="recommend_content" :columns="recommend_columns" :stripe="true"
-                    :bordered="true" :hover="true" cellEmptyContent="-" resizable max-height="150" table-layout="fixed"
-                    size="small">
+                <t-table rowKey="index" :data="recommend_content" :columns="recommend_columns" :bordered="true"
+                    :hover="true" cellEmptyContent="-" resizable max-height="150" table-layout="fixed" size="small">
                     <template #empty_status="{ row }">
-                        <t-progress theme="plump" :color="row.color" :percentage="row.percentage" />
+                        <t-progress theme="line" :color="row.color" :percentage="row.percentage" />
                     </template>
                     <template #operator="{ row }">
-                        <t-button theme="primary" @click="book_dialog_visible = true" size="small">
+                        <t-button theme="primary" @click="showDialog(row)" size="small">
                             预约
                         </t-button>
-                        <BookDialog :row="row" :visible.sync="book_dialog_visible" :dialog_visible="book_dialog_visible"
-                            @onCloseDialog="onCloseDialog" />
                     </template>
                 </t-table>
             </t-card>
         </template>
+
+        <BookDialog :row="dialogRow" :dialog_visible="book_dialog_visible" @onCloseDialog="onCloseDialog"
+            :visible.sync="book_dialog_visible" />
     </t-card>
 </template>
+
 <script>
 import BookDialog from '@/components/dialog/BookDialog.vue'
 
@@ -60,6 +61,7 @@ export default {
             recommend: '推荐预约',
             book_dialog_visible: false,
             visible_cancel_book: false,
+            dialogRow: null, // 添加一个用于存储对话框中当前行的数据
             // 表头
             my_book_columns: [
                 { colKey: 'room', title: '教室' },
@@ -185,18 +187,15 @@ export default {
                         Object.assign(item, { classroom: item.building + '-' + item.room })
 
                     })
-                    console.log(this.recommend_content)
                 })
                 .catch(function (error) {
                     // 请求失败的处理
                     that.$router.replace('/403')
                 });
-            // console.log(this.recommend_content)
         },
 
         async cancelBook(row) {
             // 确认取消
-            console.log(row)
             let that = this;
 
             await this.$http.post("deleteReservation", {
@@ -221,8 +220,10 @@ export default {
             this.visible_cancel_book = visible_cancel_book
         },
 
-        onCloseDialog(book_doalog_visible) {
-            this.book_dialog_visible = book_doalog_visible
+        onCloseDialog(data) {
+            this.book_dialog_visible = data.visible
+            this.getRecomandBook()
+            this.getMyBook()
         },
 
         // 获取格式化后的时间字符串
@@ -233,6 +234,12 @@ export default {
                 day = date.getDate()
             let newTime = year + '-' + month + '-' + day
             return newTime;
+        },
+
+        showDialog(row) {
+            row['dialog_visible'] = true
+            this.dialogRow = row; // 设置对话框中当前行的数据
+            this.book_dialog_visible = row['dialog_visible']; // 打开对话框
         },
     }
 };

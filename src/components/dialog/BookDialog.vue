@@ -1,15 +1,18 @@
 <template>
-    <t-dialog theme="default" :header="row.classroom" body="对话框内容" visible.sync="local_visible" cancelBtn="取消"
-        :confirmBtn="null" :onClose="onCloseDialog">
+    <t-dialog :visible.sync="local_visible" theme="default" header="预约" body="对话框内容" cancelBtn="取消" :confirmBtn="null"
+        :onClose="onCloseDialog">
         <t-tabs :value="value" @change="(newValue) => (value = newValue)">
             <t-tab-panel value="first">
                 <template #label>
                     明天
                 </template>
-                <t-table rowKey="time" :data="specific_book_content_one" :columns="specific_book_columns" :bordered="true"
+                <t-table rowKey="index" :data="specific_book_content_one" :columns="specific_book_columns" :bordered="true"
                     :hover="true" cellEmptyContent="-" resizable>
-                    <template #operator="{ row_ }">
-                        <t-button :disabled="row_.book_status" @click="Book(row_)">
+                    <template #book_status="{ row }">
+                        {{ row.book_status == false ? '是' : '否' }}
+                    </template>
+                    <template #operator="{ row }">
+                        <t-button :disabled="row.book_status" @click="Book(row)">
                             预约
                         </t-button>
                     </template>
@@ -19,10 +22,13 @@
                 <template #label>
                     后天
                 </template>
-                <t-table rowKey="time" :data="specific_book_content_two" :columns="specific_book_columns" :bordered="true"
+                <t-table rowKey="index" :data="specific_book_content_two" :columns="specific_book_columns" :bordered="true"
                     :hover="true" cellEmptyContent="-" resizable>
-                    <template #operator="{ row_ }">
-                        <t-button :disabled="row_.book_status" @click="Book(row_)">
+                    <template #book_status="{ row }">
+                        {{ row.book_status == false ? '是' : '否' }}
+                    </template>
+                    <template #operator="{ row }">
+                        <t-button :disabled="row.book_status" @click="Book(row)">
                             预约
                         </t-button>
                     </template>
@@ -53,75 +59,77 @@ export default {
             local_visible: false,
             value: 'first',
             room_time_info_columns: [
+                { colKey: 'classroom', title: '教室' },
                 { colKey: 'time', title: '时间段' },
                 { colKey: 'book_status', title: '空闲状态' },
                 { colKey: 'operator', title: '操作' },
             ],
             specific_book_columns: [
+                { colKey: 'classroom', title: '教室' },
                 { colKey: 'time', title: '时间段' },
                 { colKey: 'book_status', title: '是否可预约' },
                 { colKey: 'operator', title: '操作' },
             ],
 
             specific_book_content_one: [
-                { index: 1, time: '第1~2节', book_status: '', operator: '' },
-                { index: 2, time: '第3~4节', book_status: '', operator: '' },
-                { index: 3, time: '第5~6节', book_status: '', operator: '' },
-                { index: 4, time: '第7~8节', book_status: '', operator: '' },
+                { index: 1, time: '第1~2节', book_status: false, operator: '' },
+                { index: 2, time: '第3~4节', book_status: false, operator: '' },
+                { index: 3, time: '第5~6节', book_status: false, operator: '' },
+                { index: 4, time: '第7~8节', book_status: false, operator: '' },
             ],
+
             specific_book_content_two: [
-                { index: 1, time: '第1~2节', book_status: '', operator: '' },
-                { index: 2, time: '第3~4节', book_status: '', operator: '' },
-                { index: 3, time: '第5~6节', book_status: '', operator: '' },
-                { index: 4, time: '第7~8节', book_status: '', operator: '' },
+                { index: 1, time: '第1~2节', book_status: false, operator: '' },
+                { index: 2, time: '第3~4节', book_status: false, operator: '' },
+                { index: 3, time: '第5~6节', book_status: false, operator: '' },
+                { index: 4, time: '第7~8节', book_status: false, operator: '' },
             ],
         }
     },
 
-
-    created() {
-        this.getClassroomStatus();
-    },
-
     methods: {
         async Book(row) {
-            let that = this;
-            await this.$http.post("addReservation", {
-                cid: row.cid
-            }).then(function (res) {
-                // 请求成功
-                console.log("####")
-                console.log(res.data)
+            try {
+                // 发送预约请求
+                const res = await this.$http.post("addReservation", {
+                    cid: this.row.cid,
+                    sid: sessionStorage.user_id,
+                    choice: row.index,
+                    Idate: this.value === 'first' ? 1 : 2,
+                });
 
-                that.specific_book_content_one.forEach(item => {
-                    item['book_status'] = res.data
-                })
-
-            }).catch(function (error) {
-                // 请求失败的处理
-                that.$message.error({ content: "出现错误！请稍后重试！" });
-                that.$router.replace('/403')
-            });
+                if (res.data === 1) {
+                    this.$message.success("预约成功！")
+                    this.getClassroomStatus();
+                } else {
+                    this.$message.error("预约失败！")
+                }
+                // 预约成功后更新行的状态
+                this.row.book_status = true;
+            } catch (error) {
+                console.log(error);
+                this.$message.error('预约教室失败，请稍后重试！');
+            }
         },
 
         async getClassroomStatus() {
-            let that = this;
-            await this.$http.post("whetherReserve", {
-                cid: that.that.row.cid
-            }).then(function (res) {
-                // 请求成功
+            try {
+                // 发送获取教室状态的请求
+                const res = await this.$http.post("whetherReserve", {
+                    cid: this.row.cid
+                });
+
                 for (let i = 0; i < 4; i++) {
-                    specific_book_content_one[i]['book_status'] = res.data[i]
-                    specific_book_content_two[i % 4].book_status = res.data[(i % 4) + 4]
+                    this.specific_book_content_one[i]['book_status'] = (res.data[i] == 0 ? false : true);
                 }
-                for (let i = 4; i < 8; i++) {
-                    specific_book_content_two[i]['book_status'] = res.data[i]
+                let t = res.data.splice(4, 7)
+                for (let i = 0; i < 4; i++) {
+                    this.specific_book_content_two[i]['book_status'] = (t[i] == 0 ? false : true);
                 }
-            }).catch(function (error) {
-                // 请求失败的处理
-                that.$message.error({ content: "出现错误！请稍后重试！" });
-                that.$router.push('/403')
-            });
+            } catch (error) {
+                console.log(error);
+                this.$message.error('获取教室状态失败，请稍后重试！');
+            }
         },
 
         onCloseDialog() {
@@ -131,9 +139,13 @@ export default {
     },
 
     watch: {
-        dialog_visible(news, olds) {
-            this.local_visible = news
-        },
+        dialog_visible(newVal, oldVal) {
+            if (newVal) {
+                this.row = this.row
+                this.getClassroomStatus();
+            }
+            this.local_visible = newVal;
+        }
     },
 
 }

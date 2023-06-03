@@ -1,26 +1,35 @@
 <template>
-    <t-dialog theme="warning" header="修改密码" body="对话框内容" cancelBtn="取消" confirmBtn="修改" v-show="local_update_visible"
-        :onClose="onCloseDialogPwd" :onConfirm="UpdatePassword">
-        <t-space style="width: 380px">
+    <t-dialog theme="warning" header="修改密码" body="对话框内容" :cancelBtn="null" :confirmBtn="null" v-show="local_update_visible"
+        :onClose="onCloseDialogPwd">
+        <t-space style="width: 400px">
             <t-form :data="UPDATE_PASSWORD_FORM" :rules="update_password_rules" ref="update_password_form" :colon="true"
-                :labelWidth="0">
+                :labelWidth="0" @submit="UpdatePassword">
+
                 <t-form-item name="old_password">
                     <t-input size="large" type="password" clearable v-model="UPDATE_PASSWORD_FORM.old_password"
                         placeholder="请输入新密码" autocomplete="off">
                         <lock-on-icon slot="prefix-icon"></lock-on-icon>
                     </t-input>
                 </t-form-item>
+
                 <t-form-item name="password">
                     <t-input size="large" type="password" clearable v-model="UPDATE_PASSWORD_FORM.password"
                         placeholder="请输入新密码" autocomplete="off">
                         <lock-on-icon slot="prefix-icon"></lock-on-icon>
                     </t-input>
                 </t-form-item>
+
                 <t-form-item name="confirm_password">
                     <t-input size="large" type="password" clearable v-model="UPDATE_PASSWORD_FORM.confirm_password"
                         placeholder="请确认新密码" autocomplete="off">
                         <lock-on-icon slot="prefix-icon"></lock-on-icon>
                     </t-input>
+                </t-form-item>
+                <t-form-item>
+                    <t-space size="20px">
+                        <t-button theme="default" variant="base" size="large" type="reset" style="width:190px">重置</t-button>
+                        <t-button size="large" theme="primary" type="submit" block style="width:190px">修改</t-button>
+                    </t-space>
                 </t-form-item>
             </t-form>
         </t-space>
@@ -56,12 +65,14 @@ export default {
             },
 
             local_update_visible: false,
+            old_password_validate_result: 1,
 
             // 表单验证数据
             update_password_rules: {
                 old_password: [
                     { required: true, message: '密码必填', type: 'error', trigger: 'blur', },
                     { len: 6, message: '请输入 6 位密码', type: 'warning', trigger: 'blur', },
+
                 ],
                 password: [
                     { required: true, message: '密码必填', type: 'error', trigger: 'blur', },
@@ -85,27 +96,32 @@ export default {
         // 修改密码
         async UpdatePassword({ validateResult, firstError }) {
             if (validateResult === true) {
-                const { data: res } = await this.$http.post("", {
-                    // username: LOGIN.account,
-                    // password: LOGIN.password,
+                await this.$http.post("/updateStudent", {
+                    oldPassword: this.$md5(this.UPDATE_PASSWORD_FORM.old_password),
+                    newPassword: this.$md5(this.UPDATE_PASSWORD_FORM.password),
+                    reassurePassword: this.$md5(this.UPDATE_PASSWORD_FORM.confirm_password),
+                    sid: sessionStorage.user_id,
                 })
-                    .then(function (res) {
+                    .then(res => {
                         // 请求成功
-
+                        if (res.data === 1) {
+                            this.$message.success("修改成功！请重新登录");
+                            sessionStorage.clear()
+                            this.$router.replace('/index')
+                        } else if (res.data === 0) {
+                            this.$message.error("修改失败！");
+                        } else {
+                            this.$message.error("原密码错误！");
+                        }
                     })
-                    .catch(function (error) {
+                    .catch(error => {
                         // 请求失败的处理
                         console.log(error)
-                        that.$message.error({ content: "注册出现错误！请稍后重试！" });
-                        that.$router.replace('/403')
+                        that.$message.error("修改密码失败！请重试");
+                        that.$router.push('/403')
                     });
-                if (res.meta.status === 400) {
-
-                } else if (res.meta.status === 200) {
-                    // 修改成功,关闭窗口
-                    this.onCloseDialogPwd();
-                }
             } else {
+                // 表单验证失败的处理
                 console.log('Errors: ', validateResult);
                 this.$message.warning(firstError);
             }
@@ -117,7 +133,7 @@ export default {
                 return { result: false, message: '两次密码不一致', type: 'error' };
             }
 
-            if (this.UPDATE_PASSWORD_FORM.old_password !== this.UPDATE_PASSWORD_FORM.password) {
+            if (this.UPDATE_PASSWORD_FORM.old_password === this.UPDATE_PASSWORD_FORM.password) {
                 return { result: false, message: '原密码与新密码不能相同', type: 'error' };
             }
 
@@ -128,7 +144,7 @@ export default {
     watch: {
         visible(news, olds) {
             this.local_update_visible = news
-        }
+        },
     },
 }
 </script>
