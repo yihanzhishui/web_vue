@@ -6,33 +6,38 @@
                 <template #label>
                     明天
                 </template>
-                <t-table rowKey="index" :data="specific_book_content_one" :columns="specific_book_columns" :bordered="true"
-                    :hover="true" cellEmptyContent="-" resizable>
-                    <template #book_status="{ row }">
-                        {{ row.book_status == false ? '是' : '否' }}
-                    </template>
-                    <template #operator="{ row }">
-                        <t-button :disabled="row.book_status" @click="Book(row)">
-                            预约
-                        </t-button>
-                    </template>
-                </t-table>
+
+                <t-skeleton :loading="loading">
+                    <t-table rowKey="index" :data="specific_book_content_one" :columns="specific_book_columns"
+                        :bordered="true" :hover="true" cellEmptyContent="-" resizable>
+                        <template #book_status="{ row }">
+                            {{ row.book_status == false ? '是' : '否' }}
+                        </template>
+                        <template #operator="{ row }">
+                            <t-button :disabled="row.book_status" @click="Book(row)">
+                                预约
+                            </t-button>
+                        </template>
+                    </t-table>
+                </t-skeleton>
             </t-tab-panel>
             <t-tab-panel value="second">
                 <template #label>
                     后天
                 </template>
-                <t-table rowKey="index" :data="specific_book_content_two" :columns="specific_book_columns" :bordered="true"
-                    :hover="true" cellEmptyContent="-" resizable>
-                    <template #book_status="{ row }">
-                        {{ row.book_status == false ? '是' : '否' }}
-                    </template>
-                    <template #operator="{ row }">
-                        <t-button :disabled="row.book_status" @click="Book(row)">
-                            预约
-                        </t-button>
-                    </template>
-                </t-table>
+                <t-skeleton :loading="loading">
+                    <t-table rowKey="index" :data="specific_book_content_two" :columns="specific_book_columns"
+                        :bordered="true" :hover="true" cellEmptyContent="-" resizable>
+                        <template #book_status="{ row }">
+                            {{ row.book_status == false ? '是' : '否' }}
+                        </template>
+                        <template #operator="{ row }">
+                            <t-button :disabled="row.book_status" @click="Book(row)">
+                                预约
+                            </t-button>
+                        </template>
+                    </t-table>
+                </t-skeleton>
             </t-tab-panel>
         </t-tabs>
     </t-dialog>
@@ -58,6 +63,7 @@ export default {
         return {
             local_visible: false,
             value: 'first',
+            loading: true,
             room_time_info_columns: [
                 { colKey: 'classroom', title: '教室' },
                 { colKey: 'time', title: '时间段' },
@@ -126,6 +132,8 @@ export default {
                 for (let i = 0; i < 4; i++) {
                     this.specific_book_content_two[i]['book_status'] = (t[i] == 0 ? false : true);
                 }
+
+                this.loading = false
             } catch (error) {
                 console.log(error);
                 this.$message.error('获取教室状态失败，请稍后重试！');

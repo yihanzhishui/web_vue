@@ -3,27 +3,31 @@
         <template class="main_content">
             <t-layout class="result_content">
                 <t-aside class="building">
-                    <t-dropdown trigger="click" :options="buiding_options" @click="onChooseBuilding">
-                        <t-button variant="outline">
-                            <span class="dropdown__text">
-                                {{ building_select_default }}
-                                <chevron-down-icon size="20" />
-                            </span>
-                        </t-button>
-                    </t-dropdown>
+                    <t-skeleton :loading="building_loading">
+                        <t-dropdown trigger="click" :options="buiding_options" @click="onChooseBuilding">
+                            <t-button variant="outline">
+                                <span class="dropdown__text">
+                                    {{ building_select_default }}
+                                    <chevron-down-icon size="20" />
+                                </span>
+                            </t-button>
+                        </t-dropdown>
+                    </t-skeleton>
                 </t-aside>
                 <t-layout>
                     <t-content>
                         <t-layout v-show="is_classromm_show">
                             <t-aside class="classroom">
-                                <t-dropdown :options="classroom_options" trigger="click" @click="onChooseClassRoom">
-                                    <t-button variant="outline">
-                                        <span class="dropdown__text">
-                                            {{ classroom_select_default }}
-                                            <chevron-down-icon size="20" />
-                                        </span>
-                                    </t-button>
-                                </t-dropdown>
+                                <t-skeleton :loading="classroom_loading">
+                                    <t-dropdown :options="classroom_options" trigger="click" @click="onChooseClassRoom">
+                                        <t-button variant="outline">
+                                            <span class="dropdown__text">
+                                                {{ classroom_select_default }}
+                                                <chevron-down-icon size="20" />
+                                            </span>
+                                        </t-button>
+                                    </t-dropdown>
+                                </t-skeleton>
                             </t-aside>
                             <t-layout>
                                 <t-content>
@@ -31,12 +35,14 @@
                                     <t-card :cover="classroom_info.cover" title="查询" description="查询结果" class="result_card"
                                         v-show="is_result_show">
                                         <template #footer>
-                                            <span style="font-size:20px;display:flex;margin-top:10px">
-                                                教室空闲状态: {{ classroom_info.class_empty_status }}
-                                            </span>
-                                            <span style="font-size:20px;display:flex;margin-top:10px">
-                                                现有人数: {{ classroom_info.now_people_num }}
-                                            </span>
+                                            <t-skeleton :loading="info_loading">
+                                                <span style="font-size:20px;display:flex;margin-top:10px">
+                                                    教室空闲状态: {{ classroom_info.class_empty_status }}
+                                                </span>
+                                                <span style="font-size:20px;display:flex;margin-top:10px">
+                                                    现有人数: {{ classroom_info.now_people_num }}
+                                                </span>
+                                            </t-skeleton>
                                         </template>
                                     </t-card>
                                 </t-content>
@@ -66,9 +72,11 @@ export default {
             is_result_show: false,
             building_select_default: '请选择楼栋',
             classroom_select_default: '请选择教室',
-
             buiding_options: [],
             classroom_options: [],
+            building_loading: true,
+            classroom_loading: true,
+            info_loading: true,
             // 存储一下教室的id
             classroom_id: [],
             classroom_info: {
@@ -88,9 +96,11 @@ export default {
 
         async getBuildings() {
             let that = this;
+
             await this.$http.post("queryBuilding")
                 .then(function (res) {
                     // 请求成功
+                    that.building_loading = false
                     for (let i = 0; i < res.data.length; i++) {
                         that.buiding_options.push({ 'content': res.data[i], value: i })
                     }
@@ -112,11 +122,12 @@ export default {
             })
                 .then(function (res) {
                     // 请求成功
-                    // that.my_book_content = res.data
+                    that.classroom_loading = false
                     for (let i = 0; i < res.data.length; i++) {
                         that.classroom_options.push({ 'content': res.data[i].room, 'value': i });
                         that.classroom_id.push({ 'cid': res.data[i].cid, 'value': i })
                     }
+
                 })
                 .catch(function (error) {
                     // 请求失败的处理
@@ -136,6 +147,7 @@ export default {
             })
                 .then(function (res) {
                     // 请求成功
+                    that.info_loading = false
                     console.log(res.data)
                     that.classroom_info.address = res.data.building + '-' + res.data.room;
                     that.classroom_info.now_people_num = res.data.people_number;
@@ -181,6 +193,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.box {
+    width: 100%;
+    height: 100%;
+}
+
 .t_card_main {
     width: 100%;
     height: 100%;

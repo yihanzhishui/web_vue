@@ -3,38 +3,44 @@
         <template>
             <t-card :title="my_book" header-bordered>
                 <!-- 我的预约-表格 -->
-                <t-table rowKey="index" :data="my_book_content" :columns="my_book_columns" :bordered="true" :hover="true"
-                    cellEmptyContent="-" resizable max-height="150" table-layout="fixed" size="small">
+                <t-skeleton :loading="my_book_loading">
+                    <t-table rowKey="index" :data="my_book_content" :columns="my_book_columns" :bordered="true"
+                        :hover="true" cellEmptyContent="-" resizable max-height="150" table-layout="fixed" size="small">
 
-                    <template #operator="{ row }">
-                        <t-popconfirm theme="warning" content="确认取消预约吗？" v-model="row.visible_cancel_book"
-                            @confirm="cancelBook(row)">
-                            <t-button theme="danger" size="small">
-                                取消预约
-                            </t-button>
-                        </t-popconfirm>
-                    </template>
-                </t-table>
+                        <template #operator="{ row }">
+                            <t-popconfirm theme="warning" content="确认取消预约吗？" v-model="row.visible_cancel_book"
+                                @confirm="cancelBook(row)">
+                                <t-button theme="danger" size="small">
+                                    取消预约
+                                </t-button>
+                            </t-popconfirm>
+                        </template>
+                    </t-table>
+                </t-skeleton>
             </t-card>
             <t-card :title="empty_room" header-bordered style="margin-top:20px">
                 <!-- 空教室-表格 -->
-                <t-table rowKey="index" :data="empty_room_content" :columns="empty_room_columns" :bordered="true"
-                    :hover="true" cellEmptyContent="-" resizable max-height="150" table-layout="fixed"
-                    size="small"></t-table>
+                <t-skeleton :loading="my_book_loading">
+                    <t-table rowKey="index" :data="empty_room_content" :columns="empty_room_columns" :bordered="true"
+                        :hover="true" cellEmptyContent="-" resizable max-height="150" table-layout="fixed"
+                        size="small"></t-table>
+                </t-skeleton>
             </t-card>
             <t-card :title="recommend" header-bordered style="margin-top:20px">
                 <!-- 推荐预约-表格 -->
-                <t-table rowKey="index" :data="recommend_content" :columns="recommend_columns" :bordered="true"
-                    :hover="true" cellEmptyContent="-" resizable max-height="150" table-layout="fixed" size="small">
-                    <template #empty_status="{ row }">
-                        <t-progress theme="line" :color="row.color" :percentage="row.percentage" />
-                    </template>
-                    <template #operator="{ row }">
-                        <t-button theme="primary" @click="showDialog(row)" size="small">
-                            预约
-                        </t-button>
-                    </template>
-                </t-table>
+                <t-skeleton :loading="my_book_loading">
+                    <t-table rowKey="index" :data="recommend_content" :columns="recommend_columns" :bordered="true"
+                        :hover="true" cellEmptyContent="-" resizable max-height="150" table-layout="fixed" size="small">
+                        <template #empty_status="{ row }">
+                            <t-progress theme="line" :color="row.color" :percentage="row.percentage" />
+                        </template>
+                        <template #operator="{ row }">
+                            <t-button theme="primary" @click="showDialog(row)" size="small">
+                                预约
+                            </t-button>
+                        </template>
+                    </t-table>
+                </t-skeleton>
             </t-card>
         </template>
 
@@ -61,6 +67,9 @@ export default {
             recommend: '推荐预约',
             book_dialog_visible: false,
             visible_cancel_book: false,
+            my_book_loading: true,
+            empty_room_loading: true,
+            recommend_loading: true,
             dialogRow: null, // 添加一个用于存储对话框中当前行的数据
             // 表头
             my_book_columns: [
@@ -107,6 +116,7 @@ export default {
             })
                 .then(function (res) {
                     // 请求成功
+                    that.my_book_loading = false
                     that.my_book_content = res.data
                     let newDate = new Date()
                     res.data.forEach(item => {
@@ -141,6 +151,7 @@ export default {
             await this.$http.post("queryEmpty")
                 .then(function (res) {
                     // 请求成功
+                    that.empty_room_loading = false
                     that.empty_room_content = res.data;
                     res.data.forEach(item => {
                         Object.assign(item, { classroom: item.building + '-' + item.room })
@@ -158,6 +169,7 @@ export default {
             await this.$http.post("recommend")
                 .then(res => {
                     // 请求成功
+                    that.recommend_loading = false
                     that.recommend_content = res.data;
                     res.data.forEach(item => {
                         that.$http.post('queryOccupancy', {

@@ -2,19 +2,21 @@
     <t-card :title="title" header-bordered class="t_card_main">
         <template>
             <t-card :title="classroom_name" header-bordered>
-                <t-table rowKey="index" :data="book_content" :columns="book_content_columns" :bordered="true" :hover="true"
-                    cellEmptyContent="-" resizable
-                    :pagination="{ defaultPageSize: 10, defaultCurrent: 1, total: book_content.length }">
-                    <template #book_status="{ row }">
-                        <t-progress theme="line" :color="row.color" :percentage="row.percentage" />
-                    </template>
+                <t-skeleton :loading="loading">
+                    <t-table rowKey="index" :data="book_content" :columns="book_content_columns" :bordered="true"
+                        :hover="true" cellEmptyContent="-" resizable
+                        :pagination="{ defaultPageSize: 10, defaultCurrent: 1, total: book_content.length }">
+                        <template #book_status="{ row }">
+                            <t-progress theme="line" :color="row.color" :percentage="row.percentage" />
+                        </template>
 
-                    <template #operator="{ row }">
-                        <t-button theme="primary" :disabled="isBtnDisabled(row)" @click="showDialog(row)">
-                            预约
-                        </t-button>
-                    </template>
-                </t-table>
+                        <template #operator="{ row }">
+                            <t-button theme="primary" :disabled="isBtnDisabled(row)" @click="showDialog(row)">
+                                预约
+                            </t-button>
+                        </template>
+                    </t-table>
+                </t-skeleton>
             </t-card>
         </template>
 
@@ -38,6 +40,7 @@ export default {
             classroom_name: '教室名单',
             book_dialog_visible: false,
             value: 'first',
+            loading: true,
             // 表头
             book_content_columns: [
                 { colKey: 'building', title: '楼栋' },
@@ -85,6 +88,7 @@ export default {
                     return this.getClassroomStatus(bookItem);
                 });
                 this.book_content = await Promise.all(bookContent);
+                this.loading = false
             } catch (error) {
                 console.log(error);
                 this.$message.error('获取信息失败，请稍后重试！');

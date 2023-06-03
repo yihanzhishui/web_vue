@@ -2,10 +2,12 @@
     <t-card :title="title" header-bordered class="t_card_main">
         <template>
             <t-card :title="title" hover-shadow class="t_card_box">
-                <t-list size="large">
-                    <t-list-item>昵称 : {{ user_info.nick_name }}</t-list-item>
-                    <t-list-item>账号 : {{ user_info.account }}</t-list-item>
-                </t-list>
+                <t-skeleton :loading="loading">
+                    <t-list size="large">
+                        <t-list-item>昵称 : {{ user_info.nick_name }}</t-list-item>
+                        <t-list-item>账号 : {{ user_info.account }}</t-list-item>
+                    </t-list>
+                </t-skeleton>
                 <t-button variant="outline" theme="danger" class="logout_btn" @click="logout_visible = true">退出登录</t-button>
                 <logout :visible.sync="logout_visible" @onCloseDialogLogout="onCloseDialogLogout" />
                 <template #actions>
@@ -38,6 +40,7 @@ export default {
             title: '我的信息',
             update_visible: false,
             logout_visible: false,
+            loading: true,
             user_info: {
                 nick_name: '------',
                 account: '------',
@@ -62,6 +65,7 @@ export default {
                 });
                 this.user_info['nick_name'] = res.data.sname;
                 this.user_info['account'] = res.data.account;
+                this.loading = false
             } catch (error) {
                 console.log(error);
                 this.$message.error('获取教室状态失败，请稍后重试！');
