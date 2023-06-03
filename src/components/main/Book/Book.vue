@@ -11,12 +11,11 @@
                     </template>
 
                     <template #operator="{ row }">
-                        <t-button theme="primary" :disabled="isBtnDisabled(row.percentage)"
-                            @click="book_dialog_visible = true">
+                        <t-button theme="primary" :disabled="isBtnDisabled(row)" :onClick="show">
                             预约
+                            <BookDialog :row="row" v-if="row.visible" :dialog_visible="row.dialog_visible"
+                                @onCloseDialog="onCloseDialog" />
                         </t-button>
-                        <BookDialog :row="row" :visible.sync="book_dialog_visible" :dialog_visible="book_dialog_visible"
-                            @onCloseDialog="onCloseDialog" />
                     </template>
                 </t-table>
             </t-card>
@@ -62,12 +61,13 @@ export default {
 
     methods: {
         //预约按钮是否可用
-        isBtnDisabled(num) {
-            return num === 100 ? true : false;
+        isBtnDisabled(row) {
+            console.log(row)
+            return row.percentage === 100 ? true : false;
         },
 
-        onCloseDialog(dialog_visible) {
-            this.book_dialog_visible = dialog_visible;
+        onCloseDialog(data) {
+            this.book_content[data.id] = data.visible;
         },
 
         // 获取所有的教室
@@ -101,6 +101,7 @@ export default {
                             }
                         })
                         Object.assign(item, { classroom: item.building + '-' + item.room })
+                        Object.assign(item, { dialog_visible: false })
 
                         that.book_content = res.data;
                     })
@@ -121,6 +122,13 @@ export default {
             let newTime = year + '-' + month + '-' + day
             return newTime;
         },
+
+
+        show(row) {
+            // if (!row)
+            // this.$message.error("点击了")
+            console.log(row)
+        }
     }
 };
 

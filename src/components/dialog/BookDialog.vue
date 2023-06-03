@@ -6,11 +6,10 @@
                 <template #label>
                     明天
                 </template>
-                <t-table rowKey="index" :data="specific_book_content_one" :columns="specific_book_columns" :bordered="true"
+                <t-table rowKey="time" :data="specific_book_content_one" :columns="specific_book_columns" :bordered="true"
                     :hover="true" cellEmptyContent="-" resizable>
-                    <template #operator="{ row }">
-                        <t-button :disabled="specific_book_content_one[row.index - 1].book_status === '是' ? false : true"
-                            @click="Book(row)">
+                    <template #operator="{ row_ }">
+                        <t-button :disabled="row_.book_status" @click="Book(row_)">
                             预约
                         </t-button>
                     </template>
@@ -20,11 +19,10 @@
                 <template #label>
                     后天
                 </template>
-                <t-table rowKey="index" :data="specific_book_content_two" :columns="specific_book_columns" :bordered="true"
+                <t-table rowKey="time" :data="specific_book_content_two" :columns="specific_book_columns" :bordered="true"
                     :hover="true" cellEmptyContent="-" resizable>
-                    <template #operator="{ row }">
-                        <t-button :disabled="specific_book_content_two[row.index - 1].book_status === '是' ? false : true"
-                            @click="Book(row)">
+                    <template #operator="{ row_ }">
+                        <t-button :disabled="row_.book_status" @click="Book(row_)">
                             预约
                         </t-button>
                     </template>
@@ -92,11 +90,12 @@ export default {
                 cid: row.cid
             }).then(function (res) {
                 // 请求成功
+                console.log("####")
+                console.log(res.data)
 
-                for (let i = 0; i < res.data.length; i++) {
-                    specific_book_content_one[i % 4].book_status = res.data[i % 4]
-                    specific_book_content_two[i % 4].book_status = res.data[(i % 4) + 4]
-                }
+                that.specific_book_content_one.forEach(item => {
+                    item['book_status'] = res.data
+                })
 
             }).catch(function (error) {
                 // 请求失败的处理
@@ -108,12 +107,15 @@ export default {
         async getClassroomStatus() {
             let that = this;
             await this.$http.post("whetherReserve", {
-                cid: that.row.cid
+                cid: that.that.row.cid
             }).then(function (res) {
                 // 请求成功
                 for (let i = 0; i < 4; i++) {
-                    specific_book_content_one[i % 4].book_status = res.data[i % 4]
+                    specific_book_content_one[i]['book_status'] = res.data[i]
                     specific_book_content_two[i % 4].book_status = res.data[(i % 4) + 4]
+                }
+                for (let i = 4; i < 8; i++) {
+                    specific_book_content_two[i]['book_status'] = res.data[i]
                 }
             }).catch(function (error) {
                 // 请求失败的处理
@@ -124,7 +126,7 @@ export default {
 
         onCloseDialog() {
             this.local_visible = false;
-            this.$emit('onCloseDialog', false);
+            this.$emit('onCloseDialog', { visible: false, id: this.row.index });
         },
     },
 
